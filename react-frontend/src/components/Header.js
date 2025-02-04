@@ -4,10 +4,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { clearInfo } from "../store/UsersSlice";
 import { jwtDecode } from "jwt-decode";
 import "../css/Header.css";
-import { clearToken } from "../store/KakaoSlice";
-import axios from "axios";
-import apiAxios from "../lib/apiAxios";
-import { current } from "@reduxjs/toolkit";
+
 
 export default function Header() {
   const user = useSelector((state) => state.users.value);
@@ -15,7 +12,6 @@ export default function Header() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
-  const kakaoToken = useSelector((state) => state.kakao.value.token);
   let nickname = "guest";
   let type = "";
 

@@ -6,6 +6,7 @@ import Register from './page/Register';
 import Main from './page/Main';
 import KaKaoRedirect from './page/KaKaoRedirect';
 import ClassList from './page/ClassList';
+import KakaoRegister from './page/KakaoRegister';
 
 function App() {
   return (
@@ -14,7 +15,8 @@ function App() {
     <Routes>
       <Route path='/' element={<Main/>}/>
       <Route path='/login' element={<Login/>}/>
-      <Route path="/kakao/login/oauth" element={<KaKaoRedirect/>} />
+      <Route path='/kakao/login/oauth' element={<KaKaoRedirect/>} />
+      <Route path='/kakaoRegister' element={<KakaoRegister/>} />
       <Route path='/register' element={<Register/>}/>
       <Route path='/classList' element={<ClassList/>}/>
     </Routes>
