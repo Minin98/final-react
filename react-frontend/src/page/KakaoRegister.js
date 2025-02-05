@@ -2,13 +2,13 @@ import { useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "../css/Register.css";
 import apiAxios from "../lib/apiAxios";
-import { clearInfo } from "../store/UsersSlice";
+import { clearInfo, saveInfo } from "../store/UsersSlice";
 import { useDispatch } from "react-redux";
+import { jwtDecode } from "jwt-decode";
 
 export default function Register() {
   const location = useLocation();
   const { email, kakaoId } = location.state || {}; // state에서 email과 kakaoId 가져오기
-
   const username = useRef(null);
   const nickname = useRef(null);
   const phone = useRef(null);
@@ -40,17 +40,17 @@ export default function Register() {
       .post("/kakao/register", {
         name: username.current.value,
         nickname: nickname.current.value,
-        email: email.current.value,
+        email: email,
         phone: phone.current.value,
         role: role,
         kakaoId: kakaoId,
       })
       .then((res) => {
-        console.log(res.data);
-        if (res.data.count !== 0) {
-          alert(res.data.msg);
-          navigate("/");
-        }
+        alert(res.data.msg);
+        dispatch(saveInfo(res.data));
+        const decodeToken = jwtDecode(res.data.token);
+        console.log(decodeToken);
+        navigate('/');
       })
       .catch((err) => console.log(err));
   };

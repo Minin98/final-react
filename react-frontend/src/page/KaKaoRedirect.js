@@ -20,13 +20,10 @@ export default function KaKaoRedirect() {
         role: role
       }
     }).then(res => {
-      console.log("서버 응답 데이터:", res.data);  // 응답 데이터 출력
-  
       if (res.data.flag) {  // flag 값이 true인지 확인
-        dispatch(saveInfo(res.data.token));
+        dispatch(saveInfo(res.data));
         const decodeToken = jwtDecode(res.data.token);
-        console.log("디코딩된 토큰:", decodeToken);
-        alert(res.data.msg);
+        console.log(decodeToken);
         navigate('/');
       } else {
         alert(res.data.msg);

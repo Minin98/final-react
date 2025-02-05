@@ -45,10 +45,8 @@ export default function Login() {
   };
   // 컴포넌트가 처음 렌더링될 때 role 값 설정 (예: 'student' 또는 'teacher')
   useEffect(() => {
-    // 필요한 경우 여기서 role을 동적으로 설정할 수 있음
-    // 예: 로컬 스토리지나 다른 상태에 따라 설정
-    dispatch(saveRole(role)); // Redux store에 초기 role 저장
-  }, [role, dispatch]); // role이 변경될 때마다 실행
+    dispatch(saveRole(role)); 
+  }, [role, dispatch]);
   return (
     <div className="login_container" >
       <div className="login_logo_container" >
