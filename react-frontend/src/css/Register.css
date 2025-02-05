@@ -53,6 +53,7 @@ h2 {
     width: 48%;
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: 10px;
     text-align: left;
 }
@@ -85,19 +86,21 @@ input {
     font-size: 0.8rem;
     color: #f44336;
     margin-top: 10px;
+    margin-left: 80px;
 }
 
 /* 버튼 컨테이너 */
 .btn-container {
     width: 100%;
-    margin: 20px;
+    margin-bottom: 20px;
     display: flex;
-    justify-content: space-between;
+    flex-flow: row nowrap;
+    justify-content: center;
+    gap: 170px;
 }
 
 .required-note {
     width: 100%;
-    padding-left: 80px;
     text-align: left;
 }
 

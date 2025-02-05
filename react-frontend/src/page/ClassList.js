@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { useLocation, useNavigate } from "react-router-dom";
 import apiAxios from "../lib/apiAxios";
 import "../css/ClassList.css";
-import ClassInsert from "./ClassInsert";
+import { jwtDecode } from "jwt-decode";
+import ClassWrite from "./ClassWrite";
  
 export default function ClassList() {
   const [classes, setClasses] = useState([]);
@@ -11,9 +13,11 @@ export default function ClassList() {
   const [sort, setSort] = useState("최신순");
   const [visibleCount, setVisibleCount] = useState(8);
   const [loading, setLoading] = useState(true);
-  const [showInsertModal, setShowInsertModal] = useState(false);
+  const [showWriteModal, setShowWriteModal] = useState(false);
+  const [grade, setGrade] = useState(null);
 
   const location = useLocation();
+  const navigate = useNavigate();
   const queryParams = new URLSearchParams(location.search);
   const searchKeyword = queryParams.get("search") || "";
 
@@ -42,6 +46,20 @@ export default function ClassList() {
     setVisibleClasses(classes.slice(0, newVisibleCount));
   };
 
+  // JWT 토큰 디코딩
+  const user = useSelector((state) => state.users.value);
+  useEffect(() => {
+    if (user.token) {
+      const decodeToken = jwtDecode(user.token);
+      const grade = setGrade(decodeToken.grade);
+    }
+  }, [user]);
+
+  // 강의 클릭 시 해당 강의 페이지로 이동
+  const handleClassClick = (classNumber) => {
+    navigate(`/class/${classNumber}`);
+  }
+
   return (
     <div className="class-list-container">
       <div className="class-list-header">
@@ -50,9 +68,11 @@ export default function ClassList() {
 
       <div className="class-list-filter">
         <div className="class-insert-button-container">
-          <button className="class-insert-button" onClick={() => setShowInsertModal(true)}>
-            강의 등록하기
-          </button>
+          {grade === 1 && (
+            <button className="class-insert-button" onClick={() => setShowWriteModal(true)}>
+              강의 등록하기
+            </button>
+          )}
         </div>
 
         <div className="class-list-dropdown-group">
@@ -97,7 +117,7 @@ export default function ClassList() {
             <p>강의가 없습니다.</p>
           ) : (
             visibleClasses.map((classItem) => (
-              <div className="class-list-card" key={classItem.classNumber}>
+              <div className="class-list-card" key={classItem.classNumber} onClick={() => handleClassClick(classItem.classNumber)} style={{ cursor: "pointer" }}>
                 <div className="class-list-thumbnail">
                   <img src={classItem.thumbnail || "placeholder.jpg"} alt={classItem.title} className="thumbnail-image" />
                 </div>
@@ -105,7 +125,7 @@ export default function ClassList() {
                   <span className="class-list-category">{classItem.category}</span>
                   <h3 className="class-list-title">{classItem.title}</h3>
                   <p className="class-list-instructor">{classItem.name}</p>
-                  <p className="class-list-date">{classItem.createTime}</p>
+                  <p className="class-list-date">{classItem.createTime.substring(0, 10)}</p>
                 </div>
               </div>
             ))
@@ -120,7 +140,7 @@ export default function ClassList() {
       )}
 
       {/* 강의 등록 모달 추가 */}
-      {showInsertModal && <ClassInsert onClose={() => setShowInsertModal(false)} />}
+      {showWriteModal && <ClassWrite onClose={() => setShowWriteModal(false)} />}
     </div>
   );
 }

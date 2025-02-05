@@ -1,25 +1,25 @@
 import React, { useState } from "react";
-import "../css/ClassInsert.css";
- 
-export default function ClassInsert({ onClose }) {
+import apiAxios from "../lib/apiAxios";
+import { useSelector } from "react-redux"; 
+import { jwtDecode } from "jwt-decode"; 
+import "../css/ClassWrite.css";
+
+export default function ClassWrite({ onClose, onClassAdded }) {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [category, setCategory] = useState("");
     const [thumbnail, setThumbnail] = useState(null);
     const [dragging, setDragging] = useState(false);
+    const [loading, setLoading] = useState(false);
 
-    // 썸네일 업로드 핸들러
+    const user = useSelector((state) => state.users.value);
+
     const handleThumbnailUpload = (file) => {
         if (file && file.type.startsWith("image/")) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setThumbnail(reader.result);
-            };
-            reader.readAsDataURL(file);
+            setThumbnail(file);
         }
     };
 
-    // 드래그 앤 드롭 관련 핸들러
     const handleDragOver = (event) => {
         event.preventDefault();
         setDragging(true);
@@ -36,9 +36,63 @@ export default function ClassInsert({ onClose }) {
         handleThumbnailUpload(file);
     };
 
-    // 썸네일 취소 핸들러
     const handleThumbnailRemove = () => {
         setThumbnail(null);
+    };
+
+    const handleSubmit = async () => {
+        if (!title || !description || !category) {
+            alert("모든 필드를 입력해주세요.");
+            return;
+        }
+
+        setLoading(true);
+
+        let uno = null;
+        try {
+            uno = jwtDecode(user.token).sub;
+            console.log("유저 번호(uno):", uno);
+        } catch (error) {
+            console.error("JWT 디코딩 오류:", error);
+            alert("로그인이 필요합니다.");
+            setLoading(false);
+            return;
+        }
+
+        const params = JSON.stringify({ title, description, category, uno });
+
+        const formData = new FormData();
+        formData.append("params", params);
+        if (thumbnail) {
+            formData.append("thumbnail", thumbnail);
+        }
+
+        try {
+            const response = await apiAxios.post("/class/write", formData, {
+                headers: {
+                    "Authorization": `Bearer ${user.token}`, // JWT 토큰 추가
+                    "Content-Type": "multipart/form-data"
+                }
+            });
+
+            if (response.data.code === 1) {
+                alert("강의가 성공적으로 등록되었습니다!");
+                onClassAdded(); 
+
+                setTitle("");
+                setDescription("");
+                setCategory("");
+                setThumbnail(null);
+                onClose();
+            } else {
+                alert("강의 등록에 실패했습니다.");
+            }
+        } catch (error) {
+            console.error("강의 등록 중 오류 발생:", error);
+            alert("서버 오류가 발생했습니다.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -61,13 +115,13 @@ export default function ClassInsert({ onClose }) {
                         <option value="JavaScript">JavaScript</option>
                         <option value="TypeScript">TypeScript</option>
                         <option value="Kotlin">Kotlin</option>
+                        <option value="HTML/CSS">HTML/CSS</option>
+                        <option value="Database">Database</option>
                         <option value="Swift">Swift</option>
                         <option value="Go">Go</option>
                         <option value="Rust">Rust</option>
                         <option value="Ruby">Ruby</option>
                         <option value="PHP">PHP</option>
-                        <option value="HTML/CSS">HTML/CSS</option>
-
                     </select>
                 </div>
 
@@ -106,7 +160,7 @@ export default function ClassInsert({ onClose }) {
                     >
                         {thumbnail ? (
                             <div className="thumbnail-preview">
-                                <img src={thumbnail} alt="썸네일 미리보기" />
+                                <img src={URL.createObjectURL(thumbnail)} alt="썸네일 미리보기" />
                             </div>
                         ) : (
                             <p className="thumbnail-plus">+</p>
@@ -124,7 +178,9 @@ export default function ClassInsert({ onClose }) {
                 {/* 버튼 그룹 */}
                 <div className="class-insert-button-group">
                     <button className="class-insert-cancel" onClick={onClose}>취소</button>
-                    <button className="class-insert-submit" disabled={!category}>등록</button> {/* ✅ 카테고리 선택 안하면 등록 불가 */}
+                    <button className="class-insert-submit" onClick={handleSubmit} disabled={!category || loading}>
+                        {loading ? "등록 중..." : "등록"}
+                    </button>
                 </div>
             </div>
         </div>

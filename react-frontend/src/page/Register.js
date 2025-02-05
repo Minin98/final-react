@@ -56,8 +56,8 @@ export default function Register() {
 
   // 아이디 중복 체크 (POST 방식)
   const checkIdDuplicate = () => {
-    apiAxios.post("/check/id", { id:id.current.value }).then((res) => {
-      if(res.data){
+    apiAxios.post("/check/id", { id: id.current.value }).then((res) => {
+      if (res.data) {
         alert("중복된 아이디입니다. 다른 아이디를 사용해주세요.");
         setIdDuplicate(true);
       } else {
@@ -70,7 +70,7 @@ export default function Register() {
   // 닉네임 중복 체크 (POST 방식)
   const checkNicknameDuplicate = () => {
     apiAxios.post("/check/nickname", { nickname: nickname.current.value }).then((res) => {
-      if(res.data){
+      if (res.data) {
         alert("중복된 닉네임 입니다. 다른 닉네임을 사용해주세요.");
         setNicknameDuplicate(true);
       } else {
@@ -203,7 +203,7 @@ export default function Register() {
               />
             </div>
           </div>
-          <p className="required-note">* 표시는 필수 입력입니다.</p>
+            <p className="required-note">* 표시는 필수 입력입니다.</p>
           <div className="btn-container">
             <button type="button" className="submit-btn" onClick={register}>
               회원가입
