@@ -7,6 +7,9 @@ import Main from './page/Main';
 import KaKaoRedirect from './page/KaKaoRedirect';
 import ClassList from './page/ClassList';
 import KakaoRegister from './page/KakaoRegister';
+import MypageInfo from './page/MypageInfo';
+import UserUpdate from './page/UserUpdate';
+import Mypage from './page/Mypage';
 
 function App() {
   return (
@@ -19,6 +22,9 @@ function App() {
       <Route path='/kakaoRegister' element={<KakaoRegister/>} />
       <Route path='/register' element={<Register/>}/>
       <Route path='/classList' element={<ClassList/>}/>
+      <Route path='/mypage' element={<Mypage/>}/>
+      <Route path='/mypage/userinfo' element={<MypageInfo/>}/>
+      <Route path='/mypage/updateinfo' element={<UserUpdate/>}/>
     </Routes>
    </Router>
   );
