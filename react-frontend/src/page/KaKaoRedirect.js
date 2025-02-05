@@ -20,16 +20,20 @@ export default function KaKaoRedirect() {
         role: role
       }
     }).then(res => {
-      dispatch(saveInfo(res.data));
-      const decodeToken = jwtDecode(res.data.token);
-      console.log(decodeToken);
-      navigate('/');
+      if (res.data.flag) {  // flag 값이 true인지 확인
+        dispatch(saveInfo(res.data));
+        const decodeToken = jwtDecode(res.data.token);
+        console.log(decodeToken);
+        navigate('/');
+      } else {
+        alert(res.data.msg);
+        navigate('/kakaoRegister', { state: { email: res.data.email, kakaoId: res.data.kakaoId } });
+      }
     }).catch(error => {
-      console.error(error);
-      navigate('/');
-    })
-  }, [])
-
+      console.error("에러 발생:", error);
+      navigate('/login');
+    });
+  }, []);
 
   return <div>현재 카카오 로그인 중입니다....</div>;
 }

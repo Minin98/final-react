@@ -4,32 +4,14 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { clearInfo } from "../store/UsersSlice";
 import { jwtDecode } from "jwt-decode";
 import "../css/Header.css";
-import { clearToken } from "../store/KakaoSlice";
-import axios from "axios";
-import apiAxios from "../lib/apiAxios";
-import { current } from "@reduxjs/toolkit";
 
 export default function Header() {
   const user = useSelector((state) => state.users.value);
-  console.log(user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
-  const kakaoToken = useSelector((state) => state.kakao.value.token);
   let nickname = "guest";
   let type = "";
-
-  // JWT 토큰 디코딩
-  if (user.token) {
-    const decodeToken = jwtDecode(user.token);
-    nickname = decodeToken.nickname;
-    type = decodeToken.type;
-  };
-
-  const location = useLocation();
-  if (location.pathname === "/login") {
-    return null;
-  };
 
   // 로그아웃 처리 함수
   const logout = (e) => {
@@ -37,14 +19,15 @@ export default function Header() {
     dispatch(clearInfo());
     alert("로그아웃 되었습니다.");
     navigate("/login");
-  }
+  };
+
   // 검색 창 처리 함수
   const searchHandler = () => {
     if (search.trim()) {
       navigate(`/classList?search=${encodeURIComponent(search)}`);
     }
   };
-
+  
 
   // 엔터키 입력 처리 함수
   const handleKeyPress = (e) => {
@@ -53,7 +36,17 @@ export default function Header() {
     }
   };
 
+  // JWT 토큰 디코딩
+  if (user.token) {
+    const decodeToken = jwtDecode(user.token);
+    nickname = decodeToken.nickname;
+    type = decodeToken.type;
+  };
 
+  const location = useLocation(); 
+  if (location.pathname === "/login") {
+    return null; 
+  }
 
   return (
     <header>

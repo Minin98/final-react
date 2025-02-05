@@ -47,7 +47,7 @@ export default function Register() {
   // 비밀번호 확인 검사
   const checkConfirmPassword = () => {
     if (password.current.value !== checkPwd.current.value) {
-      setConfirmPasswordValid(false); 
+      setConfirmPasswordValid(false);
       return false;
     }
     setConfirmPasswordValid(true);
@@ -55,41 +55,29 @@ export default function Register() {
   };
 
   // 아이디 중복 체크 (POST 방식)
-  const checkIdDuplicate = async () => {
-    try {
-      const response = await apiAxios.post("/check/id", {
-        id: id.current.value,
-      });
-      if (!response.data.exists) {
-        alert("아이디가 이미 존재합니다.");
+  const checkIdDuplicate = () => {
+    apiAxios.post("/check/id", { id:id.current.value }).then((res) => {
+      if(res.data){
+        alert("중복된 아이디입니다. 다른 아이디를 사용해주세요.");
         setIdDuplicate(true);
       } else {
-        alert("사용 가능한 아이디입니다.");
+        alert("사용가능한 아이디입니다.");
         setIdDuplicate(false);
       }
-    } catch (error) {
-      console.error(error);
-      alert("아이디 중복 확인 중 오류가 발생했습니다.");
-    }
+    }).catch((err) => console.log(err));
   };
 
   // 닉네임 중복 체크 (POST 방식)
-  const checkNicknameDuplicate = async () => {
-    try {
-      const response = await apiAxios.post("/check/nickname", {
-        nickname: nickname.current.value,
-      });
-      if (!response.data.exists) {
-        alert("닉네임이 이미 존재합니다.");
+  const checkNicknameDuplicate = () => {
+    apiAxios.post("/check/nickname", { nickname: nickname.current.value }).then((res) => {
+      if(res.data){
+        alert("중복된 닉네임 입니다. 다른 닉네임을 사용해주세요.");
         setNicknameDuplicate(true);
       } else {
-        alert("사용 가능한 닉네임입니다.");
+        alert("사용가능한 닉네임입니다.");
         setNicknameDuplicate(false);
       }
-    } catch (error) {
-      console.error(error);
-      alert("닉네임 중복 확인 중 오류가 발생했습니다.");
-    }
+    }).catch((err) => console.log(err));
   };
 
   const validateForm = () => {

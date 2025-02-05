@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useLocation } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { jwtDecode } from "jwt-decode";
 import apiAxios from "../lib/apiAxios";
 import "../css/ClassList.css";
-import ClassInsert from "./ClassInsert";
- 
+import ClassWrite from "./ClassWrite";
+
 export default function ClassList() {
   const [classes, setClasses] = useState([]);
   const [visibleClasses, setVisibleClasses] = useState([]);
@@ -11,14 +13,32 @@ export default function ClassList() {
   const [sort, setSort] = useState("최신순");
   const [visibleCount, setVisibleCount] = useState(8);
   const [loading, setLoading] = useState(true);
-  const [showInsertModal, setShowInsertModal] = useState(false);
+  const [showWriteModal, setShowWriteModal] = useState(false);
 
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const searchKeyword = queryParams.get("search") || "";
 
+  const user = useSelector((state) => state.users.value);
+
+
+
+  const userGrade = useMemo(() => {
+    if (!user.token) return 0;
+    try {
+      const decodedToken = jwtDecode(user.token);
+      console.log("디코딩된 토큰:", decodedToken);
+      return decodedToken.roles === "강사" ? 1 : 2;
+    } catch (error) {
+      console.error("토큰 디코딩 오류:", error);
+      return 0;
+    }
+  }, [user.token]);
+
   useEffect(() => {
-    fetchClasses();
+    if (searchKeyword !== null) {
+      fetchClasses();
+    }
   }, [category, sort, searchKeyword]);
 
   const fetchClasses = async () => {
@@ -27,6 +47,9 @@ export default function ClassList() {
       const response = await apiAxios.get("/class/search", {
         params: { category, sort, searchKeyword },
       });
+      
+      // console.log("강의 목록 데이터 확인:", response.data);
+      
       setClasses(response.data);
       setVisibleClasses(response.data.slice(0, visibleCount));
     } catch (error) {
@@ -50,17 +73,15 @@ export default function ClassList() {
 
       <div className="class-list-filter">
         <div className="class-insert-button-container">
-          <button className="class-insert-button" onClick={() => setShowInsertModal(true)}>
-            강의 등록하기
-          </button>
+          {userGrade === 1 && (
+            <button className="class-insert-button" onClick={() => setShowWriteModal(true)}>
+              강의 등록하기
+            </button>
+          )}
         </div>
 
         <div className="class-list-dropdown-group">
-          <select
-            className="class-list-dropdown"
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-          >
+          <select className="class-list-dropdown" value={category} onChange={(e) => setCategory(e.target.value)}>
             <option value="전체">전체</option>
             <option value="Java">Java</option>
             <option value="Python">Python</option>
@@ -70,19 +91,16 @@ export default function ClassList() {
             <option value="JavaScript">JavaScript</option>
             <option value="TypeScript">TypeScript</option>
             <option value="Kotlin">Kotlin</option>
+            <option value="HTML/CSS">HTML/CSS</option>
+            <option value="Database">Database</option>
             <option value="Swift">Swift</option>
             <option value="Go">Go</option>
             <option value="Rust">Rust</option>
             <option value="Ruby">Ruby</option>
             <option value="PHP">PHP</option>
-            <option value="HTML/CSS">HTML/CSS</option>
           </select>
 
-          <select
-            className="class-list-dropdown"
-            value={sort}
-            onChange={(e) => setSort(e.target.value)}
-          >
+          <select className="class-list-dropdown" value={sort} onChange={(e) => setSort(e.target.value)}>
             <option value="최신순">최신순</option>
             <option value="평점순">평점순</option>
           </select>
@@ -99,13 +117,30 @@ export default function ClassList() {
             visibleClasses.map((classItem) => (
               <div className="class-list-card" key={classItem.classNumber}>
                 <div className="class-list-thumbnail">
-                  <img src={classItem.thumbnail || "placeholder.jpg"} alt={classItem.title} className="thumbnail-image" />
+                  <img
+                    src={classItem.thumbnail
+                      ? `http://localhost:9999/class/classThumbnails/${classItem.thumbnail}`
+                      : "/img/default_thumbnail.jpg"}
+                    alt={classItem.title}
+                    className="thumbnail-image"
+                  />
+
+                  {/* <img src={classItem.thumbnail || "placeholder.jpg"} alt={classItem.title} className="thumbnail-image" /> */}
                 </div>
                 <div className="class-list-details">
                   <span className="class-list-category">{classItem.category}</span>
                   <h3 className="class-list-title">{classItem.title}</h3>
                   <p className="class-list-instructor">{classItem.name}</p>
-                  <p className="class-list-date">{classItem.createTime}</p>
+                  <p className="class-list-date">
+                    {new Date(classItem.createTime).toLocaleString("ko-KR", {
+                      year: "numeric",
+                      month: "2-digit",
+                      day: "2-digit",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      second: "2-digit",
+                    })}
+                  </p>
                 </div>
               </div>
             ))
@@ -119,8 +154,12 @@ export default function ClassList() {
         </button>
       )}
 
-      {/* 강의 등록 모달 추가 */}
-      {showInsertModal && <ClassInsert onClose={() => setShowInsertModal(false)} />}
+      {showWriteModal && (
+        <ClassWrite
+          onClose={() => setShowWriteModal(false)}
+          onClassAdded={fetchClasses} // 강의 등록 후 목록 자동 업데이트
+        />
+      )}
     </div>
   );
 }

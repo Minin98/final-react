@@ -1,13 +1,23 @@
 /* Header 전체 */
 header {
-  width: 1200px;
+  width: 100%;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   background-color: #fff;
   padding: 10px 20px;
   box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.1);
+  position: fixed; 
+  top: 0;
+  left: 0;
+  z-index: 9999;
+}
 
+.header-container {
+  width: 1200px; 
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 /* 로고 */
@@ -50,7 +60,7 @@ nav ul li a:hover {
 .search-input {
   border: 1px solid #ccc;
   border-radius: 25px;
-  padding: 5px 10px;
+  padding: 20px 10px;
   padding-right: 35px;
   font-size: 14px;
   width: 400px;
