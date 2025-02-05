@@ -127,4 +127,8 @@ export default function Class() {
             </div>
         </div>
     );
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> af3d680eab0ac82d632127d5f954a6916b20bf1f

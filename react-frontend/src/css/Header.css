@@ -7,9 +7,16 @@ header {
   background-color: #fff;
   padding: 10px 20px;
   box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.1);
+<<<<<<< HEAD
   position: sticky;
   top: 0;
   left: 0;
+=======
+  position: fixed; 
+  top: 0;
+  left: 0;
+  z-index: 9999;
+>>>>>>> af3d680eab0ac82d632127d5f954a6916b20bf1f
 }
 
 .header-container {

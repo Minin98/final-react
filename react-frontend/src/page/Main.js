@@ -29,15 +29,19 @@ export default function Main() {
 
     nickname = `${role} ${decodeToken.nickname}`;
   }
+<<<<<<< HEAD
 
   // 강의 클릭 시 해당 강의 페이지로 이동
   const handleClassClick = (classNumber) => {
     navigate(`/class/${classNumber}`);
   }
+=======
+>>>>>>> af3d680eab0ac82d632127d5f954a6916b20bf1f
 
   return (
     <>
       <div className="header-space"></div>
+<<<<<<< HEAD
       <div className="main-background">
         <div className="main-container">
           <div className="left">
@@ -73,6 +77,34 @@ export default function Main() {
                       <h3 className="lc-title">{classItem.title}</h3>
                       <p className="lc-instructor">{classItem.name}</p>
                       <p className="lc-date">{classItem.createTime.substring(0, 10)}</p>
+=======
+      <div className="main-container">
+        <div className="main-content">
+          <div className="left">
+            {/* 메인 배너 */}
+            <div className="main-banner">
+              <img src="/img/banner.png" alt="banner" className="banner-img" />
+              <button
+                className="banner-button"
+                onClick={() => (window.location.href = "/classList")}
+              >
+                강의 목록 바로가기 &gt;
+              </button>
+            </div>
+
+            {/* 최신 강의 */}
+            <div className="latest-classes">
+              <h2 className="section-title">최신 강의</h2>
+              <div className="cards">
+                {latestClasses.map((classList) => (
+                  <div className="card" key={classList.classNumber}>
+                    <div className="info">
+                      <span className="category">{classList.category}</span>
+                      <div className="thumbnail"></div>
+                      <p className="title">{classList.title}</p>
+                      <p className="instructor">{classList.name} 강사</p>
+                      <p className="date">{classList?.createTime ? classList.createTime.substring(0, 10) : "날짜 없음"}</p>
+>>>>>>> af3d680eab0ac82d632127d5f954a6916b20bf1f
                     </div>
                   </div>
                 ))}
@@ -81,7 +113,10 @@ export default function Main() {
           </div>
 
           {/* 오른쪽 사이드바 */}
+<<<<<<< HEAD
 
+=======
+>>>>>>> af3d680eab0ac82d632127d5f954a6916b20bf1f
           <div className="sidebar">
             <div className="profile">
               <div className="profile-pic"></div>
@@ -108,7 +143,11 @@ export default function Main() {
               ))}
             </div>
 
+<<<<<<< HEAD
             <div className="qna-section">
+=======
+            <div className="qa-section">
+>>>>>>> af3d680eab0ac82d632127d5f954a6916b20bf1f
               <h3 className="sidebar-title">Q&A</h3>
               {[1, 2, 3].map((item) => (
                 <div className="sidebar-item" key={item}>

@@ -56,8 +56,13 @@ export default function Register() {
 
   // 아이디 중복 체크 (POST 방식)
   const checkIdDuplicate = () => {
+<<<<<<< HEAD
     apiAxios.post("/check/id", { id: id.current.value }).then((res) => {
       if (res.data) {
+=======
+    apiAxios.post("/check/id", { id:id.current.value }).then((res) => {
+      if(res.data){
+>>>>>>> af3d680eab0ac82d632127d5f954a6916b20bf1f
         alert("중복된 아이디입니다. 다른 아이디를 사용해주세요.");
         setIdDuplicate(true);
       } else {
@@ -70,7 +75,11 @@ export default function Register() {
   // 닉네임 중복 체크 (POST 방식)
   const checkNicknameDuplicate = () => {
     apiAxios.post("/check/nickname", { nickname: nickname.current.value }).then((res) => {
+<<<<<<< HEAD
       if (res.data) {
+=======
+      if(res.data){
+>>>>>>> af3d680eab0ac82d632127d5f954a6916b20bf1f
         alert("중복된 닉네임 입니다. 다른 닉네임을 사용해주세요.");
         setNicknameDuplicate(true);
       } else {

@@ -12,7 +12,11 @@ export default function Header() {
   const [search, setSearch] = useState("");
   let nickname = "guest";
 
+<<<<<<< HEAD
   // 로그아웃
+=======
+  // 로그아웃 처리 함수
+>>>>>>> af3d680eab0ac82d632127d5f954a6916b20bf1f
   const logout = (e) => {
     e.preventDefault();
     dispatch(clearInfo());
@@ -20,7 +24,11 @@ export default function Header() {
     navigate("/login");
   };
 
+<<<<<<< HEAD
   // 검색 창
+=======
+  // 검색 창 처리 함수
+>>>>>>> af3d680eab0ac82d632127d5f954a6916b20bf1f
   const searchHandler = () => {
     if (search.trim()) {
       navigate(`/classList?search=${encodeURIComponent(search)}`);
@@ -38,12 +46,18 @@ export default function Header() {
   // JWT 토큰 디코딩
   if (user.token) {
     const decodeToken = jwtDecode(user.token);
+<<<<<<< HEAD
         
         const grade = decodeToken.grade === 1 ? "강사" : "수강생";
        
     
         nickname = `${grade} ${decodeToken.nickname}`;
   }
+=======
+    nickname = decodeToken.nickname;
+    type = decodeToken.type;
+  };
+>>>>>>> af3d680eab0ac82d632127d5f954a6916b20bf1f
 
   const location = useLocation(); 
   if (location.pathname === "/login") {
