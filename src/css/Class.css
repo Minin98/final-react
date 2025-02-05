@@ -1,0 +1,229 @@
+.class-view-container {
+  max-width: 1200px;
+  background-color: #f9f9f9;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.class-view-container > .class-header {
+  padding: 30px;
+  margin-bottom: 20px;
+  background: #fff;
+}
+
+.class-view-container > .class-header > .class-category {
+  background: #fff8e8;
+  color: #ff8d00;
+  padding: 5px 10px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.class-view-container > .class-header > .class-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 20px 0;
+}
+
+.class-view-container > .class-header > .class-instructor {
+  font-size: 14px;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+.class-view-container > .class-header > .class-date {
+  font-size: 12px;
+  color: #666;
+}
+
+.class-view-container > .class-header > .class-description {
+  margin: 30px 0;
+  font-size: 16px;
+}
+
+.class-view-container > .class-header > .class-rate {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+}
+
+.class-view-container > .class-header > .class-rate > .review {
+  margin-left: 10px;
+  text-decoration: none;
+  color: #ff8c00;
+  font-weight: bold;
+}
+
+.class-view-container > .class-header > .class-rate > .review:hover {
+  text-decoration: underline;
+}
+
+.class-view-container > .class-header > .instructor-controls {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.class-view-container > .class-header > .instructor-controls > .class-modify-button,
+.class-view-container > .class-header > .instructor-controls > .class-delete-button {
+  background-color: #ff8c00;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.class-view-container > .class-header > .instructor-controls > .class-modify-button:hover,
+.class-view-container > .class-header > .instructor-controls > .class-delete-button:hover {
+  background-color: #e28411;
+}
+
+.class-view-container > .class-header > .class-enroll-button {
+  background-color: #ff8c00;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.class-view-container > .class-menu {
+  display: flex;
+  border-bottom: 2px solid #ddd;
+  margin-bottom: 20px;
+}
+
+.class-view-container > .class-menu > a {
+  padding: 10px 20px;
+  text-decoration: none;
+  color: #333;
+  font-weight: bold;
+}
+
+.class-view-container > .class-menu > a.active,
+.class-view-container > .class-menu > a:hover {
+  color: #ff8c00;
+  border-bottom: 3px solid #ff8c00;
+}
+
+.class-view-container > .chapter-list {
+  margin-top: 20px;
+}
+
+.class-view-container > .chapter-list > .chapter {
+  background: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.class-view-container > .chapter-list > .chapter > .chapter-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.class-view-container > .chapter-list > .chapter > .chapter-header > h3 {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.class-view-container > .chapter-list > .chapter > .chapter-header > .lecture-count {
+  font-size: 14px;
+  color: #666;
+  margin-left: 10px;
+}
+
+.class-view-container > .chapter-list > .chapter > .chapter-header > .goto-quiz-btn {
+  background-color: #fff;
+  border: 1px solid #ff8c00;
+  color: #ff8c00;
+  padding: 6px 12px;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+  margin-left: auto;
+}
+
+.class-view-container > .chapter-list > .chapter > .video-list {
+  margin-top: 10px;
+  padding-left: 15px;
+}
+
+.class-view-container > .chapter-list > .chapter > .video-list > .video-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.class-view-container > .chapter-list > .chapter > .video-list > .video-item > .video-title {
+  font-size: 14px;
+  color: #333;
+  font-weight: bold;
+}
+
+.class-view-container > .chapter-list > .chapter > .video-list > .video-item > .video-duration {
+  font-size: 14px;
+}
+
+.class-view-container > .chapter-list > .chapter > .video-list > .video-item > .watch-video-btn {
+  background-color: #fff;
+  border: 1px solid #ff8c00;
+  color: #ff8c00;
+  padding: 6px 12px;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.class-view-container > .chapter-list > .chapter > .video-list > .video-item > .instructor-video-controls {
+  display: flex;
+}
+
+
+/* 강사 전용 버튼 스타일 */
+.instructor-controls > .class-modify-button,
+.instructor-controls > .class-delete-button,
+.instructor-actions > .edit-chapter,
+.instructor-actions > .delete-chapter,
+.instructor-actions > .quiz-manage,
+.instructor-video-controls > .edit-video,
+.instructor-video-controls > .delete-video,
+.add-video,
+.add-chapter {
+  background-color: #fff;
+  border: 1px solid #ff8c00;
+  color: #ff8c00;
+  padding: 6px 12px;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.3s ease-in-out;
+  margin-right: 5px;
+}
+
+.instructor-controls > .class-modify-button:hover,
+.instructor-controls > .class-delete-button:hover,
+.instructor-actions > .edit-chapter:hover,
+.instructor-actions > .delete-chapter:hover,
+.instructor-actions > .quiz-manage:hover,
+.instructor-video-controls > .edit-video:hover,
+.instructor-video-controls > .delete-video:hover,
+.add-video:hover,
+.add-chapter:hover {
+  background-color: #ff8c00;
+  color: #fff;
+}
+
