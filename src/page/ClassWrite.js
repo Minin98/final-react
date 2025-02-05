@@ -92,6 +92,7 @@ export default function ClassWrite({ onClose, onClassAdded }) {
             alert("서버 오류가 발생했습니다.");
         } finally {
             setLoading(false);
+            onClose();
         }
     };
 
@@ -116,7 +117,7 @@ export default function ClassWrite({ onClose, onClassAdded }) {
                         <option value="TypeScript">TypeScript</option>
                         <option value="Kotlin">Kotlin</option>
                         <option value="HTML/CSS">HTML/CSS</option>
-                        <option value="Database">Database</option>
+                        <option value="Database">SQL</option>
                         <option value="Swift">Swift</option>
                         <option value="Go">Go</option>
                         <option value="Rust">Rust</option>

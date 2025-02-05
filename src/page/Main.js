@@ -66,7 +66,10 @@ export default function Main() {
                 {latestClasses.map((classItem) => (
                   <div className="lc-card" key={classItem.classNumber} onClick={() => handleClassClick(classItem.classNumber)} style={{ cursor: "pointer" }}>
                     <div className="lc-thumbnail">
-                      <img src={classItem.thumbnail || "placeholder.jpg"} alt={classItem.title} className="lc-thumbnail-image" />
+                      <img src={classItem.thumbnail
+                        ? `http://localhost:9999/class/classThumbnails/${classItem.thumbnail}`
+                        : "/img/default_thumbnail.jpg"}
+                        alt={classItem.title} className="lc-thumbnail-image" />
                     </div>
                     <div className="lc-details">
                       <span className="lc-category">{classItem.category}</span>

@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import apiAxios from "../lib/apiAxios";
 import "../css/ClassList.css";
 import { jwtDecode } from "jwt-decode";
 import ClassWrite from "./ClassWrite";
- 
+
 export default function ClassList() {
   const [classes, setClasses] = useState([]);
   const [visibleClasses, setVisibleClasses] = useState([]);
@@ -18,47 +18,60 @@ export default function ClassList() {
 
   const location = useLocation();
   const navigate = useNavigate();
+
   const queryParams = new URLSearchParams(location.search);
   const searchKeyword = queryParams.get("search") || "";
 
-  useEffect(() => {
-    fetchClasses();
-  }, [category, sort, searchKeyword]);
-
-  const fetchClasses = async () => {
+  //  fetchClasses를 useCallback으로 감싸서 useEffect와 안정적으로 연결
+  const fetchClasses = useCallback(async () => {
     setLoading(true);
     try {
       const response = await apiAxios.get("/class/search", {
         params: { category, sort, searchKeyword },
       });
-      setClasses(response.data);
-      setVisibleClasses(response.data.slice(0, visibleCount));
+
+      let sortedClasses = [...response.data];
+
+      //  클라이언트 측에서 평점순 정렬 추가 (백엔드 보장 + 프론트 보장)
+      if (sort === "평점순") {
+        sortedClasses.sort((a, b) => b.rate - a.rate);
+      }
+
+      setClasses(sortedClasses);
     } catch (error) {
       console.error("강의 목록을 가져오는 중 오류 발생:", error);
     } finally {
       setLoading(false);
     }
-  };
+  }, [category, sort, searchKeyword]);
 
+  useEffect(() => {
+    fetchClasses();
+  }, [fetchClasses]);
+
+  useEffect(() => {
+    setVisibleClasses(classes.slice(0, visibleCount));
+  }, [classes, visibleCount]);
+
+  const user = useSelector((state) => state.users.value);
+  useEffect(() => {
+    if (user.token) {
+      const decodeToken = jwtDecode(user.token);
+      setGrade(decodeToken.grade);
+    }
+  }, [user]);
+
+  // "강의 더 보기" 버튼 클릭 시 추가 데이터 로드
   const loadMoreClasses = () => {
     const newVisibleCount = visibleCount + 4;
     setVisibleCount(newVisibleCount);
     setVisibleClasses(classes.slice(0, newVisibleCount));
   };
 
-  // JWT 토큰 디코딩
-  const user = useSelector((state) => state.users.value);
-  useEffect(() => {
-    if (user.token) {
-      const decodeToken = jwtDecode(user.token);
-      const grade = setGrade(decodeToken.grade);
-    }
-  }, [user]);
-
-  // 강의 클릭 시 해당 강의 페이지로 이동
+  //강의 클릭 시 해당 강의 페이지로 이동
   const handleClassClick = (classNumber) => {
     navigate(`/class/${classNumber}`);
-  }
+  };
 
   return (
     <div className="class-list-container">
@@ -89,9 +102,9 @@ export default function ClassList() {
             <option value="C#">C#</option>
             <option value="JavaScript">JavaScript</option>
             <option value="TypeScript">TypeScript</option>
+            <option value="SQL">SQL</option>
             <option value="Kotlin">Kotlin</option>
             <option value="Swift">Swift</option>
-            <option value="Go">Go</option>
             <option value="Rust">Rust</option>
             <option value="Ruby">Ruby</option>
             <option value="PHP">PHP</option>
@@ -117,9 +130,20 @@ export default function ClassList() {
             <p>강의가 없습니다.</p>
           ) : (
             visibleClasses.map((classItem) => (
-              <div className="class-list-card" key={classItem.classNumber} onClick={() => handleClassClick(classItem.classNumber)} style={{ cursor: "pointer" }}>
+              <div
+                className="class-list-card"
+                key={classItem.classNumber}
+                onClick={() => handleClassClick(classItem.classNumber)}
+                style={{ cursor: "pointer" }}
+              >
                 <div className="class-list-thumbnail">
-                  <img src={classItem.thumbnail || "placeholder.jpg"} alt={classItem.title} className="thumbnail-image" />
+                <img
+                    src={classItem.thumbnail
+                      ? `http://localhost:9999/class/classThumbnails/${classItem.thumbnail}`
+                      : "/img/default_thumbnail.png"}
+                    alt={classItem.title}
+                    className="thumbnail-image"
+                  />
                 </div>
                 <div className="class-list-details">
                   <span className="class-list-category">{classItem.category}</span>
@@ -138,9 +162,13 @@ export default function ClassList() {
           강의 더 보기
         </button>
       )}
-
-      {/* 강의 등록 모달 추가 */}
-      {showWriteModal && <ClassWrite onClose={() => setShowWriteModal(false)} />}
+      
+      {showWriteModal && (
+        <ClassWrite
+          onClose={() => setShowWriteModal(false)}
+          onClassAdded={fetchClasses} // 강의 등록 후 목록 자동 업데이트
+        />
+      )}
     </div>
   );
 }
