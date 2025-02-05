@@ -46,7 +46,6 @@ export default function Register() {
         kakaoId: kakaoId,
       })
       .then((res) => {
-        alert(res.data.msg);
         dispatch(saveInfo(res.data));
         const decodeToken = jwtDecode(res.data.token);
         console.log(decodeToken);
