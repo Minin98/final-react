@@ -4,16 +4,17 @@ import { useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import apiAxios from "../lib/apiAxios";
 import { jwtDecode } from "jwt-decode";
+import VideoWrite from "./VideoWrite";
 
 export default function Class() {
     const [classInfo, setClassInfo] = useState({});
     const [chapters, setChapters] = useState([]);
     const [videos, setVideos] = useState({});
+    const [isVideoWriteModalOpen, setVideoWriteModalOpen] = useState(false);
     const user = useSelector((state) => state.users.value);
     const { classNumber } = useParams();
 
     const decodeToken = user.token ? jwtDecode(user.token) : "";
-
     const grade =
         decodeToken.grade ||
         (decodeToken.roles === "강사" ? 1 : decodeToken.roles === "학생" ? 2 : 3);
@@ -26,7 +27,6 @@ export default function Class() {
                 setClassInfo(res.data.class);
                 setChapters(res.data.chapter || []);
                 setVideos(res.data.video || {});
-
             })
             .catch((err) => console.log(err));
     }, [classNumber]);
@@ -36,6 +36,16 @@ export default function Class() {
             ? videos[String(chapterNumber)].length
             : 0;
     };
+
+    // "동영상 추가" 버튼 클릭 시 모달 열기
+    const openVideoWriteModal = () => setVideoWriteModalOpen(true);
+    
+    // 모달에서 "등록" 버튼 클릭 시 실행될 함수
+    const handleVideoWriteSubmit = (videoData) => {
+        console.log("등록할 영상 데이터:", videoData);
+        setVideoWriteModalOpen(false);  // 모달 닫기
+    };
+    
 
     return (
         <div className="class-view-container">
@@ -72,11 +82,11 @@ export default function Class() {
                 {chapters.length === 0 ? (
                     <p>등록된 챕터가 없습니다.</p>
                 ) : (
-                    chapters.map((chapter, index) =>
+                    chapters.map((chapter) =>
                         chapter ? (
                             <div className="chapter" key={chapter.chapterNumber}>
                                 <div className="chapter-header">
-                                    <h3>{`${chapter?.chapterName || "제목 없음"}`}</h3>
+                                    <h3>{chapter?.chapterName || "제목 없음"}</h3>
                                     <p>{videoCount(chapter.chapterNumber)}개의 강의</p>
                                     {isClassOwner ? (
                                         <div className="instructor-actions">
@@ -116,7 +126,9 @@ export default function Class() {
                                         <p>등록된 영상이 없습니다.</p>
                                     )}
                                     {isClassOwner && (
-                                        <button className="add-video">동영상 추가</button>
+                                        <button className="add-video" onClick={openVideoWriteModal}>
+                                            동영상 추가
+                                        </button>
                                     )}
                                 </div>
                             </div>
@@ -125,6 +137,10 @@ export default function Class() {
                 )}
                 {isClassOwner && <button className="add-chapter">챕터 추가</button>}
             </div>
+
+            {isVideoWriteModalOpen && (
+                <VideoWrite onClose={() => setVideoWriteModalOpen(false)} onSubmit={handleVideoWriteSubmit} />
+            )}
         </div>
     );
 }
