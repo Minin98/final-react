@@ -11,7 +11,7 @@
   align-items: center;
   justify-content: center;
   color: white;
-  background-image: url('../img/login.png');
+  background-image: url('/public/img/login.png');
 }
 
 .login_form_container {
