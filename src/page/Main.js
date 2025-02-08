@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
-import apiAxios from "../lib/apiAxios";  // ✅ fetch 대신 axios 사용
+import apiAxios from "../lib/apiAxios";  // fetch 대신 axios 사용
 import "../css/Main.css";
 
 export default function Main() {
@@ -18,7 +18,7 @@ export default function Main() {
           ...classItem,
           thumbnail: classItem.thumbnail
             ? `http://${window.location.hostname}:9999/class/thumbnail/${classItem.thumbnail}`
-            : "/img/default_thumbnail.jpg"  // ✅ 백엔드 API로 썸네일 제공
+            : "/img/default_thumbnail.jpg"  // API로 썸네일 제공
         }));
         setLatestClasses(updatedClasses);
       })
