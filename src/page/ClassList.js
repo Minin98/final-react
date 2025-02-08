@@ -22,20 +22,23 @@ export default function ClassList() {
   const queryParams = new URLSearchParams(location.search);
   const searchKeyword = queryParams.get("search") || "";
 
-  //  fetchClasses를 useCallback으로 감싸서 useEffect와 안정적으로 연결
+  // 강의 목록을 불러오는 함수
   const fetchClasses = useCallback(async () => {
     setLoading(true);
+    console.log("정렬 방식 확인:", sort); // 정렬 방식 확인
     try {
       const response = await apiAxios.get("/class/search", {
         params: { category, sort, searchKeyword },
       });
 
-      let sortedClasses = [...response.data];
+      let sortedClasses = response.data.classList || [];
 
-      //  클라이언트 측에서 평점순 정렬 추가 (백엔드 보장 + 프론트 보장)
-      if (sort === "평점순") {
-        sortedClasses.sort((a, b) => b.rate - a.rate);
-      }
+      sortedClasses = sortedClasses.map(classItem => ({
+        ...classItem,
+        thumbnail: classItem.thumbnail
+          ? `http://${window.location.hostname}:9999/class/thumbnail/${classItem.thumbnail}`
+          : "/img/default_thumbnail.png" // API를 통해 이미지 제공
+      }));
 
       setClasses(sortedClasses);
     } catch (error) {
@@ -68,7 +71,7 @@ export default function ClassList() {
     setVisibleClasses(classes.slice(0, newVisibleCount));
   };
 
-  //강의 클릭 시 해당 강의 페이지로 이동
+  // 강의 클릭 시 해당 강의 페이지로 이동
   const handleClassClick = (classNumber) => {
     navigate(`/class/${classNumber}`);
   };
@@ -137,10 +140,8 @@ export default function ClassList() {
                 style={{ cursor: "pointer" }}
               >
                 <div className="class-list-thumbnail">
-                <img
-                    src={classItem.thumbnail
-                      ? `http://localhost:9999/class/classThumbnails/${classItem.thumbnail}`
-                      : "/img/default_thumbnail.png"}
+                  <img
+                    src={classItem.thumbnail}
                     alt={classItem.title}
                     className="thumbnail-image"
                   />
@@ -162,7 +163,7 @@ export default function ClassList() {
           강의 더 보기
         </button>
       )}
-      
+
       {showWriteModal && (
         <ClassWrite
           onClose={() => setShowWriteModal(false)}

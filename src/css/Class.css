@@ -5,13 +5,13 @@
   padding: 20px;
 }
 
-.class-view-container > .class-header {
+.class-header {
   padding: 30px;
   margin-bottom: 20px;
   background: #fff;
 }
 
-.class-view-container > .class-header > .class-category {
+.class-category {
   background: #fff8e8;
   color: #ff8d00;
   padding: 5px 10px;
@@ -21,53 +21,53 @@
   margin-bottom: 15px;
 }
 
-.class-view-container > .class-header > .class-title {
+.class-title {
   font-size: 24px;
   font-weight: bold;
   margin: 20px 0;
 }
 
-.class-view-container > .class-header > .class-instructor {
+.class-instructor {
   font-size: 14px;
   font-weight: bold;
   margin: 10px 0;
 }
 
-.class-view-container > .class-header > .class-date {
+.class-date {
   font-size: 12px;
   color: #666;
 }
 
-.class-view-container > .class-header > .class-description {
+.class-description {
   margin: 30px 0;
   font-size: 16px;
 }
 
-.class-view-container > .class-header > .class-rate {
+.class-rate {
   display: flex;
   align-items: center;
   font-size: 14px;
 }
 
-.class-view-container > .class-header > .class-rate > .review {
+.class-rate > .review {
   margin-left: 10px;
   text-decoration: none;
   color: #ff8c00;
   font-weight: bold;
 }
 
-.class-view-container > .class-header > .class-rate > .review:hover {
+.class-rate > .review:hover {
   text-decoration: underline;
 }
 
-.class-view-container > .class-header > .instructor-controls {
+.instructor-controls {
   display: flex;
   gap: 10px;
   margin-top: 10px;
 }
 
-.class-view-container > .class-header > .instructor-controls > .class-modify-button,
-.class-view-container > .class-header > .instructor-controls > .class-delete-button {
+.instructor-controls > .class-modify-button,
+.instructor-controls > .class-delete-button {
   background-color: #ff8c00;
   color: white;
   padding: 10px 15px;
@@ -78,12 +78,12 @@
   margin-top: 10px;
 }
 
-.class-view-container > .class-header > .instructor-controls > .class-modify-button:hover,
-.class-view-container > .class-header > .instructor-controls > .class-delete-button:hover {
+.instructor-controls > .class-modify-button:hover,
+.instructor-controls > .class-delete-button:hover {
   background-color: #e28411;
 }
 
-.class-view-container > .class-header > .class-enroll-button {
+.class-enroll-button {
   background-color: #ff8c00;
   color: white;
   padding: 10px 15px;
@@ -94,30 +94,30 @@
   margin-top: 10px;
 }
 
-.class-view-container > .class-menu {
+.class-menu {
   display: flex;
   border-bottom: 2px solid #ddd;
   margin-bottom: 20px;
 }
 
-.class-view-container > .class-menu > a {
+.class-menu > a {
   padding: 10px 20px;
   text-decoration: none;
   color: #333;
   font-weight: bold;
 }
 
-.class-view-container > .class-menu > a.active,
-.class-view-container > .class-menu > a:hover {
+.class-menu > a.active,
+.class-menu > a:hover {
   color: #ff8c00;
   border-bottom: 3px solid #ff8c00;
 }
 
-.class-view-container > .chapter-list {
+.chapter-list {
   margin-top: 20px;
 }
 
-.class-view-container > .chapter-list > .chapter {
+.chapter {
   background: #fff;
   padding: 20px;
   border-radius: 5px;
@@ -125,26 +125,26 @@
   box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.class-view-container > .chapter-list > .chapter > .chapter-header {
+.chapter-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 10px;
 }
 
-.class-view-container > .chapter-list > .chapter > .chapter-header > h3 {
+.chapter-header > h3 {
   font-size: 18px;
   font-weight: bold;
   margin: 0;
 }
 
-.class-view-container > .chapter-list > .chapter > .chapter-header > .lecture-count {
+.lecture-count {
   font-size: 14px;
   color: #666;
   margin-left: 10px;
 }
 
-.class-view-container > .chapter-list > .chapter > .chapter-header > .goto-quiz-btn {
+.goto-quiz-btn {
   background-color: #fff;
   border: 1px solid #ff8c00;
   color: #ff8c00;
@@ -155,12 +155,12 @@
   margin-left: auto;
 }
 
-.class-view-container > .chapter-list > .chapter > .video-list {
+.video-list {
   margin-top: 10px;
   padding-left: 15px;
 }
 
-.class-view-container > .chapter-list > .chapter > .video-list > .video-item {
+.video-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -168,17 +168,17 @@
   border-bottom: 1px solid #ddd;
 }
 
-.class-view-container > .chapter-list > .chapter > .video-list > .video-item > .video-title {
+.video-title {
   font-size: 14px;
   color: #333;
   font-weight: bold;
 }
 
-.class-view-container > .chapter-list > .chapter > .video-list > .video-item > .video-duration {
+.video-duration {
   font-size: 14px;
 }
 
-.class-view-container > .chapter-list > .chapter > .video-list > .video-item > .watch-video-btn {
+.watch-video-btn {
   background-color: #fff;
   border: 1px solid #ff8c00;
   color: #ff8c00;
@@ -188,12 +188,11 @@
   cursor: pointer;
 }
 
-.class-view-container > .chapter-list > .chapter > .video-list > .video-item > .instructor-video-controls {
+.instructor-video-controls {
   display: flex;
 }
 
-
-/* 강사 전용 버튼 스타일 */
+/* ✅ 강사 전용 버튼 스타일 */
 .instructor-controls > .class-modify-button,
 .instructor-controls > .class-delete-button,
 .instructor-actions > .edit-chapter,
@@ -227,3 +226,56 @@
   color: #fff;
 }
 
+/* ✅ 챕터 추가 입력 필드 스타일 */
+.add-chapter-input {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 15px;
+  padding: 10px;
+  background: #fff;
+  border-radius: 5px;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.add-chapter-input input {
+  flex-grow: 1;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  outline: none;
+}
+
+.add-chapter-input input:focus {
+  border-color: #ff8c00;
+}
+
+.confirm-add-chapter {
+  background-color: #ff8c00;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.confirm-add-chapter:hover {
+  background-color: #e28411;
+}
+
+/* ✅ 챕터 등록 취소 버튼 스타일 추가 */
+.cancel-add-chapter {
+  background-color: #ddd;
+  color: black;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.cancel-add-chapter:hover {
+  background-color: #bbb;
+}

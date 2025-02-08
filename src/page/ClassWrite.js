@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import apiAxios from "../lib/apiAxios";
-import { useSelector } from "react-redux"; 
-import { jwtDecode } from "jwt-decode"; 
+import { useSelector } from "react-redux";
+import { jwtDecode } from "jwt-decode";
 import "../css/ClassWrite.css";
 
 export default function ClassWrite({ onClose, onClassAdded }) {
@@ -51,7 +51,6 @@ export default function ClassWrite({ onClose, onClassAdded }) {
         let uno = null;
         try {
             uno = jwtDecode(user.token).sub;
-            console.log("유저 번호(uno):", uno);
         } catch (error) {
             console.error("JWT 디코딩 오류:", error);
             alert("로그인이 필요합니다.");
@@ -70,14 +69,17 @@ export default function ClassWrite({ onClose, onClassAdded }) {
         try {
             const response = await apiAxios.post("/class/write", formData, {
                 headers: {
-                    "Authorization": `Bearer ${user.token}`, // JWT 토큰 추가
+                    "Authorization": `Bearer ${user.token}`,
                     "Content-Type": "multipart/form-data"
                 }
             });
 
             if (response.data.code === 1) {
                 alert("강의가 성공적으로 등록되었습니다!");
-                onClassAdded(); 
+
+                console.log("등록된 썸네일 경로:", response.data.thumbnail);
+
+                onClassAdded(); // 강의 등록 후 목록 자동 업데이트
 
                 setTitle("");
                 setDescription("");
@@ -178,10 +180,10 @@ export default function ClassWrite({ onClose, onClassAdded }) {
 
                 {/* 버튼 그룹 */}
                 <div className="class-insert-button-group">
-                    <button className="class-insert-cancel" onClick={onClose}>취소</button>
                     <button className="class-insert-submit" onClick={handleSubmit} disabled={!category || loading}>
                         {loading ? "등록 중..." : "등록"}
                     </button>
+                    <button className="class-insert-cancel" onClick={onClose}>취소</button>
                 </div>
             </div>
         </div>

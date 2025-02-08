@@ -2,6 +2,7 @@ import './App.css';
 import { Route, BrowserRouter as Router, Routes, useLocation } from 'react-router-dom';
 import Login from './page/Login';
 import Header from './components/Header';
+import Footer from './components/Footer';
 import Register from './page/Register';
 import Main from './page/Main';
 import KaKaoRedirect from './page/KaKaoRedirect';
@@ -31,7 +32,7 @@ function Layout() {
         <Route path='/mypage/updateinfo' element={<UserUpdate />} />
         <Route path='/class/:classNumber' element={<Class />} />
       </Routes>
-      {!hideHeaderFooter && <footer />}
+      {!hideHeaderFooter && <Footer />}
     </>
   );
 }
