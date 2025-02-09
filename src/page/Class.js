@@ -84,7 +84,10 @@ export default function Class() {
     // 강의 삭제
     const deleteClass = () => {
         apiAxios.delete(`/class/${classNumber}`, {
-            headers: { "Authorization": `Bearer ${user.token}` }
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${user.token}` 
+            }
         })
         .then(res => {
             alert(res.data.msg);
