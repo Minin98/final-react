@@ -108,3 +108,28 @@
 .add-video:hover {
     background-color: #e28411;
 }
+
+
+.watch-video {
+    background-color: transparent;
+    color: #ff8c00;
+    padding: 8px 14px;
+    border: 2px solid #ff8c00;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+}
+
+.watch-video:hover {
+    background-color: #ff8c00;
+    color: white;
+}
+
+.watch-video:disabled {
+    background-color: #f0f0f0;
+    color: #ccc;
+    border: 2px solid #ccc;
+    cursor: not-allowed;
+}

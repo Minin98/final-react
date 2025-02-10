@@ -97,22 +97,7 @@
   background-color: #e28411;
 }
 
-.add-chapter-input input {
-  flex-grow: 1;
-  padding: 10px;
-  font-size: 15px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  outline: none;
-  margin-right: 10px;
-}
-
-.add-chapter-input input:focus {
-  border-color: #ff8c00;
-}
-
-/* 챕터 등록 버튼 스타일 */
-.confirm-add-chapter {
+.class-enroll-button, .class-cancel-button{
   background-color: #ff8c00;
   color: white;
   padding: 10px 15px;
@@ -120,24 +105,5 @@
   border-radius: 5px;
   font-size: 14px;
   cursor: pointer;
-  margin-right: 5px;
-}
-
-.confirm-add-chapter:hover {
-  background-color: #e28411;
-}
-
-/* 챕터 등록 취소 버튼 스타일 추가 */
-.cancel-add-chapter {
-  background-color: #ddd;
-  color: black;
-  padding: 10px 15px;
-  border: none;
-  border-radius: 5px;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-.cancel-add-chapter:hover {
-  background-color: #bbb;
+  margin-top: 15px;
 }

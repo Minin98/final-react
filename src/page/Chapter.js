@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import "../css/Chapter.css";
 import apiAxios from "../lib/apiAxios";
 import { jwtDecode } from "jwt-decode";
 import VideoWrite from "./VideoWrite";
 
-export default function Chapter() {
+export default function Chapter({ isEnrolled }) { // 부모로부터 isEnrolled 상태 전달받음
     const [classInfo, setClassInfo] = useState({});
     const [chapters, setChapters] = useState([]);
     const [videos, setVideos] = useState({});
@@ -18,11 +18,13 @@ export default function Chapter() {
 
     const user = useSelector((state) => state.users.value);
     const { classNumber } = useParams();
+    const navigate = useNavigate();
 
     const decodeToken = user.token ? jwtDecode(user.token) : "";
     const grade = decodeToken.grade || (decodeToken.roles === "강사" ? 1 : decodeToken.roles === "학생" ? 2 : 3);
     const isClassOwner = grade === 1 && decodeToken.sub === classInfo.uno;
 
+    // 강의 정보 및 챕터, 영상 데이터 가져오기
     const fetchClassInfo = useCallback(() => {
         setLoading(true);
         apiAxios.get(`/class/${classNumber}`)
@@ -50,6 +52,11 @@ export default function Chapter() {
     // 챕터 내 비디오 개수 반환
     const getVideoCount = (chapterNumber) => {
         return videos[String(chapterNumber)] ? videos[String(chapterNumber)].length : 0;
+    };
+
+    // "영상 보기" 버튼 클릭 시 이동
+    const handleWatchVideo = (videoNumber) => {
+        navigate(`/video/${videoNumber}`);
     };
 
     // 챕터 추가 모드 ON/OFF
@@ -85,8 +92,8 @@ export default function Chapter() {
 
     return (
         <div className="chapter-list">
-            {loading && <p className="loading-text">로딩 중...</p>} {/* 로딩 중 표시 */}
-    
+            {loading && <p className="loading-text">로딩 중...</p>}
+
             {!loading && chapters.map((chapter) => (
                 <div className="chapter" key={chapter.chapterNumber}>
                     <div className="chapter-header">
@@ -105,12 +112,17 @@ export default function Chapter() {
                             <div className="video-item" key={video.videoNumber}>
                                 <span className="video-title">{video.videoTitle || "영상 제목 없음"}</span>
                                 <span className="video-duration">{formatDuration(video.videoDuration)}</span>
-                                {isClassOwner && (
+                                
+                                {isClassOwner ? (
                                     <div className="instructor-video-controls">
                                         <button className="edit-video" disabled={loading}>수정</button>
                                         <button className="delete-video" disabled={loading}>삭제</button>
                                     </div>
-                                )}
+                                ) : (grade === 2 && isEnrolled) ? ( // `isEnrolled`를 부모에서 받음
+                                    <button className="watch-video" onClick={() => handleWatchVideo(video.videoNumber)}>
+                                        영상 보기
+                                    </button>
+                                ) : null}
                             </div>
                         ))}
                         {isClassOwner && (
@@ -121,7 +133,7 @@ export default function Chapter() {
                     </div>
                 </div>
             ))}
-            
+
             {isClassOwner && (
                 <>
                     {!isChapterInsertMode ? (
@@ -141,7 +153,7 @@ export default function Chapter() {
                     )}
                 </>
             )}
-            
+
             {isVideoWriteModalOpen && <VideoWrite onClose={() => setVideoWriteModalOpen(false)} chapterNumber={selectedChapter} onVideoAdded={fetchClassInfo} />}
         </div>
     );
