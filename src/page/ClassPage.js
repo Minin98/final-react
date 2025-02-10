@@ -1,0 +1,138 @@
+import { useState, useEffect, useCallback } from "react";
+import { useSelector } from "react-redux";
+import { Link, useParams, useNavigate } from "react-router-dom";
+import apiAxios from "../lib/apiAxios";
+import ClassUpdate from "./ClassUpdate";
+import Chapter from "./Chapter";
+import Notice from "./Notice";
+import "../css/ClassPage.css";
+import { jwtDecode } from "jwt-decode";
+
+export default function ClassPage() {
+    const { classNumber } = useParams();
+    const navigate = useNavigate();
+    const [activeMenu, setActiveMenu] = useState("chapter"); // 기본값 chapter
+    const [classInfo, setClassInfo] = useState({});
+    const [showUpdateModal, setShowUpdateModal] = useState(false);
+    const [loading, setLoading] = useState(true);
+
+    const user = useSelector((state) => state.users.value);
+    const decodeToken = user?.token ? jwtDecode(user.token) : null;
+    const grade = decodeToken?.grade || (decodeToken?.roles === "강사" ? 1 : decodeToken?.roles === "학생" ? 2 : 3);
+    const isClassOwner = classInfo?.uno && decodeToken?.sub && grade === 1 && String(decodeToken.sub) === String(classInfo?.uno);
+
+    const fetchClassInfo = useCallback(() => {
+        setLoading(true);
+        apiAxios.get(`/class/${classNumber}`)
+            .then((res) => {
+                if (res.data.class) {
+                    setClassInfo(res.data.class);
+                } else {
+                    console.error("강의 정보가 존재하지 않습니다.");
+                }
+            })
+            .catch((err) => console.error(err))
+            .finally(() => setLoading(false));
+    }, [classNumber]);
+    
+    const updateHandler = () => {
+        fetchClassInfo();
+        navigate(`/class/${classNumber}`);
+    };
+
+    useEffect(() => {
+        if (!classNumber) {
+            console.error("classNumber가 존재하지 않습니다.");
+            return;
+        }
+
+        fetchClassInfo();
+    }, [fetchClassInfo]);
+
+    const handleMenuChange = (menu) => {
+        setActiveMenu(menu);
+    };
+
+    // 강의 삭제
+    const deleteClass = () => {
+        apiAxios.delete(`/class/${classNumber}`, {
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${user.token}`
+            }
+        })
+            .then(res => {
+                alert(res.data.msg);
+                if (res.data.code === 1) {
+                    navigate('/classList');
+                }
+            })
+            .catch(err => console.log(err));
+    };
+
+
+    return (
+        <div className="class-container">
+            
+            {loading && <p className="loading-text">로딩 중...</p>}
+            {/* 강의 헤더 */}
+            <div className="class-header">
+                <span className="class-category">{classInfo.category}</span>
+                <h1 className="class-title">{classInfo.title}</h1>
+                <p className="class-instructor">{classInfo.name} 강사</p>
+                <p className="class-description">{classInfo.description}</p>
+                <div className="class-rate">
+                    <span>평점 : {classInfo.rate}</span>
+                    <Link to={`/class/${classNumber}/rate`} className="review">수강평 보기</Link>
+                </div>
+                {isClassOwner && (
+                    <div className="instructor-controls">
+                        <button className="class-modify-button" onClick={() => setShowUpdateModal(true)}>강의 수정</button>
+                        <button className="class-delete-button" onClick={deleteClass}>강의 삭제</button>
+                    </div>
+                )}
+                {grade === 2 && <button className="class-enroll-button">강의 수강하기</button>}
+            </div>
+
+            {/* 강의 메뉴 */}
+            <div className="class-menu">
+                <button
+                    className={activeMenu === "chapter" ? "active" : ""}
+                    onClick={() => handleMenuChange("chapter")}
+                >
+                    챕터 목록
+                </button>
+                <button
+                    className={activeMenu === "notice" ? "active" : ""}
+                    onClick={() => handleMenuChange("notice")}
+                >
+                    공지사항
+                </button>
+                <button
+                    className={activeMenu === "qna" ? "active" : ""}
+                    onClick={() => handleMenuChange("qna")}
+                >
+                    Q&A
+                </button>
+                <button
+                    className={activeMenu === "rate" ? "active" : ""}
+                    onClick={() => handleMenuChange("rate")}
+                >
+                    수강평
+                </button>
+
+                {/* 추가적인 메뉴 항목들 */}
+            </div>
+
+            {/* 메뉴에 따른 콘텐츠 */}
+            <div className="class-content">
+                {activeMenu === "chapter" && <Chapter classNumber={classNumber} />}
+                {activeMenu === "notice" && <Notice classNumber={classNumber} />}
+                {activeMenu === "qna" && <Notice classNumber={classNumber} />}
+                {activeMenu === "rate" && <Notice classNumber={classNumber} />}
+            </div>
+
+            {showUpdateModal && <ClassUpdate classInfo={classInfo} onClose={() => setShowUpdateModal(false)} onClassUpdated={updateHandler} />}
+        </div>
+    );
+}

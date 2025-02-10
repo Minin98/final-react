@@ -1,0 +1,143 @@
+.class-container {
+  max-width: 1200px;
+  background-color: #f9f9f9;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.class-header {
+  padding: 30px;
+  margin-bottom: 20px;
+  background: #fff;
+}
+
+.class-category {
+  background: #fff8e8;
+  color: #ff8d00;
+  padding: 5px 10px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.class-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 20px 0;
+}
+
+.class-instructor {
+  font-size: 14px;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+.class-description {
+  margin: 30px 0;
+  font-size: 16px;
+}
+
+.class-rate {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+}
+
+.class-rate .review {
+  margin-left: 10px;
+  text-decoration: none;
+  color: #ff8c00;
+  font-weight: bold;
+}
+
+.class-rate .review:hover {
+  text-decoration: underline;
+}
+
+.class-menu {
+  display: flex;
+  border-bottom: 2px solid #ddd;
+  margin-bottom: 20px;
+}
+
+.class-menu button {
+  padding: 10px 20px;
+  border: none;
+  background: none;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.class-menu button.active,
+.class-menu button:hover {
+  color: #ff8c00;
+  border-bottom: 3px solid #ff8c00;
+}
+
+.instructor-controls {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.class-modify-button,
+.class-delete-button {
+  background-color: #ff8c00;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.class-modify-button:hover,
+.class-delete-button:hover {
+  background-color: #e28411;
+}
+
+.add-chapter-input input {
+  flex-grow: 1;
+  padding: 10px;
+  font-size: 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  outline: none;
+  margin-right: 10px;
+}
+
+.add-chapter-input input:focus {
+  border-color: #ff8c00;
+}
+
+/* 챕터 등록 버튼 스타일 */
+.confirm-add-chapter {
+  background-color: #ff8c00;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+  margin-right: 5px;
+}
+
+.confirm-add-chapter:hover {
+  background-color: #e28411;
+}
+
+/* 챕터 등록 취소 버튼 스타일 추가 */
+.cancel-add-chapter {
+  background-color: #ddd;
+  color: black;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.cancel-add-chapter:hover {
+  background-color: #bbb;
+}

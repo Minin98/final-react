@@ -1,8 +1,8 @@
+
 import './App.css';
 import { Route, BrowserRouter as Router, Routes, useLocation } from 'react-router-dom';
 import Login from './page/Login';
 import Header from './components/Header';
-import Footer from './components/Footer';
 import Register from './page/Register';
 import Main from './page/Main';
 import KaKaoRedirect from './page/KaKaoRedirect';
@@ -11,7 +11,8 @@ import KakaoRegister from './page/KakaoRegister';
 import MypageInfo from './page/MypageInfo';
 import UserUpdate from './page/UserUpdate';
 import Mypage from './page/Mypage';
-import Class from './page/Class';
+import ClassPage from './page/ClassPage';
+import Notice from './page/Notice';
 
 function Layout() {
   const location = useLocation();
@@ -30,9 +31,10 @@ function Layout() {
         <Route path='/mypage' element={<Mypage />} />
         <Route path='/mypage/userinfo' element={<MypageInfo />} />
         <Route path='/mypage/updateinfo' element={<UserUpdate />} />
-        <Route path='/class/:classNumber' element={<Class />} />
+        <Route path='/class/:classNumber' element={<ClassPage />} />
+        <Route path='/class/:classNumber/notice' element={<Notice />} />
       </Routes>
-      {!hideHeaderFooter && <Footer />}
+      {!hideHeaderFooter && <footer />}
     </>
   );
 }
