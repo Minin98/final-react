@@ -36,11 +36,11 @@
     display: flex;
     justify-content: center;
     margin-top: 15px;
-    gap: 30px;
+    gap: 20px;
   }
   
   .submit-btn, .cancel-btn{
-    width: 100px;
+    width: 110px;
     border-radius: 5px;
     padding: 10px 20px;
     cursor: pointer;

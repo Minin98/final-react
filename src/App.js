@@ -13,10 +13,11 @@ import UserUpdate from './page/UserUpdate';
 import Mypage from './page/Mypage';
 import ClassPage from './page/ClassPage';
 import Notice from './page/Notice';
+import VideoPage from './page/VideoPage';
 
 function Layout() {
   const location = useLocation();
-  const hideHeaderFooter = location.pathname === '/login';
+  const hideHeaderFooter = location.pathname === '/login' || location.pathname.startsWith('/video/');
 
   return (
     <>
@@ -33,6 +34,7 @@ function Layout() {
         <Route path='/mypage/updateinfo' element={<UserUpdate />} />
         <Route path='/class/:classNumber' element={<ClassPage />} />
         <Route path='/class/:classNumber/notice' element={<Notice />} />
+        <Route path='/video/:videoNumber' element={<VideoPage />} /> 
       </Routes>
       {!hideHeaderFooter && <footer />}
     </>

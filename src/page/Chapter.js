@@ -6,7 +6,7 @@ import apiAxios from "../lib/apiAxios";
 import { jwtDecode } from "jwt-decode";
 import VideoWrite from "./VideoWrite";
 
-export default function Chapter({ isEnrolled }) { // 부모로부터 isEnrolled 상태 전달받음
+export default function Chapter({ isEnrolled }) { 
     const [classInfo, setClassInfo] = useState({});
     const [chapters, setChapters] = useState([]);
     const [videos, setVideos] = useState({});
@@ -17,7 +17,7 @@ export default function Chapter({ isEnrolled }) { // 부모로부터 isEnrolled 
     const [loading, setLoading] = useState(false);
 
     const user = useSelector((state) => state.users.value);
-    const { classNumber } = useParams();
+    const { classNumber } = useParams();  // 🔹 강의 번호 가져오기
     const navigate = useNavigate();
 
     const decodeToken = user.token ? jwtDecode(user.token) : "";
@@ -118,7 +118,7 @@ export default function Chapter({ isEnrolled }) { // 부모로부터 isEnrolled 
                                         <button className="edit-video" disabled={loading}>수정</button>
                                         <button className="delete-video" disabled={loading}>삭제</button>
                                     </div>
-                                ) : (grade === 2 && isEnrolled) ? ( // `isEnrolled`를 부모에서 받음
+                                ) : (grade === 2 && isEnrolled) ? ( 
                                     <button className="watch-video" onClick={() => handleWatchVideo(video.videoNumber)}>
                                         영상 보기
                                     </button>
@@ -154,7 +154,7 @@ export default function Chapter({ isEnrolled }) { // 부모로부터 isEnrolled 
                 </>
             )}
 
-            {isVideoWriteModalOpen && <VideoWrite onClose={() => setVideoWriteModalOpen(false)} chapterNumber={selectedChapter} onVideoAdded={fetchClassInfo} />}
+            {isVideoWriteModalOpen && <VideoWrite onClose={() => setVideoWriteModalOpen(false)} chapterNumber={selectedChapter} classNumber={classNumber} onVideoAdded={fetchClassInfo} />}
         </div>
     );
 }

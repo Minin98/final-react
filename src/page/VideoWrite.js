@@ -2,19 +2,19 @@ import React, { useState } from "react";
 import "../css/VideoWrite.css";
 import apiAxios from "../lib/apiAxios";
 
-export default function VideoWrite({ onClose, chapterNumber, onVideoAdded }) {
+export default function VideoWrite({ onClose, chapterNumber, classNumber, onVideoAdded }) {
     const [title, setTitle] = useState("");  // 사용자가 입력하는 영상 제목
-    const [videoId, setVideoId] = useState("");  // 사용자가 입력하는 유튜브 영상 ID
+    const [videoUrl, setVideoUrl] = useState("");  // 유튜브 영상 URL
     const [loading, setLoading] = useState(false);
 
     // 입력 값 변경 핸들러
     const handleChangeTitle = (e) => setTitle(e.target.value);
-    const handleChangeVideoId = (e) => setVideoId(e.target.value);
+    const handleChangeVideoUrl = (e) => setVideoUrl(e.target.value);
 
     // "등록" 버튼 클릭 시 실행
     const handleSubmit = async () => {
-        if (!title.trim() || !videoId.trim()) {
-            alert("동영상 제목과 ID를 입력해주세요.");
+        if (!title.trim() || !videoUrl.trim()) {
+            alert("동영상 제목과 URL을 입력해주세요.");
             return;
         }
 
@@ -22,9 +22,10 @@ export default function VideoWrite({ onClose, chapterNumber, onVideoAdded }) {
 
         try {
             const response = await apiAxios.post("/video/insert", {
-                videoTitle: title,  // 강사가 입력한 제목을 그대로 저장
-                videoId,
-                chapterNumber
+                videoTitle: title,  // 강사가 입력한 제목
+                videoUrl, // 🔹 videoUrl을 그대로 백엔드로 전송
+                chapterNumber,
+                classNumber
             });
 
             if (response.data.code === 1) {
@@ -54,9 +55,9 @@ export default function VideoWrite({ onClose, chapterNumber, onVideoAdded }) {
                 />
                 <input
                     type="text"
-                    placeholder="유튜브 영상 ID를 입력 해주세요. (반드시 유튜브 ID여야 합니다.)"
-                    value={videoId}
-                    onChange={handleChangeVideoId}
+                    placeholder="유튜브 영상 URL을 입력 해주세요."
+                    value={videoUrl}
+                    onChange={handleChangeVideoUrl}
                 />
                 <div className="video-write-buttons">
                     <button onClick={handleSubmit} className="submit-btn" disabled={loading}>
