@@ -16,7 +16,7 @@ const VideoPage = () => {
     useEffect(() => {
         apiAxios.get(`/video/${videoNumber}`)
             .then((response) => {
-                console.log("API 응답 데이터:", response.data); // ✅ 응답 데이터 확인
+                console.log("API 응답 데이터:", response.data);
     
                 if (response.data.code === 1) {
                     const videoData = response.data.video;
@@ -24,7 +24,6 @@ const VideoPage = () => {
                     setPrevVideoId(response.data.prevVideoId ?? null);
                     setNextVideoId(response.data.nextVideoId ?? null);
                     
-                    // ✅ 강의 제목과 챕터 제목을 API 응답의 최상위에서 가져옴
                     setClassTitle(response.data.classTitle ?? "강의 정보 없음");
                     setChapterTitle(response.data.chapterTitle ?? "챕터 정보 없음");
                     setClassNumber(videoData.classNumber);

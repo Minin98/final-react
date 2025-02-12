@@ -3,8 +3,8 @@ import "../css/VideoWrite.css";
 import apiAxios from "../lib/apiAxios";
 
 export default function VideoWrite({ onClose, chapterNumber, classNumber, onVideoAdded }) {
-    const [title, setTitle] = useState("");  // 사용자가 입력하는 영상 제목
-    const [videoUrl, setVideoUrl] = useState("");  // 유튜브 영상 URL
+    const [title, setTitle] = useState("");
+    const [videoUrl, setVideoUrl] = useState("");
     const [loading, setLoading] = useState(false);
 
     // 입력 값 변경 핸들러
@@ -23,7 +23,7 @@ export default function VideoWrite({ onClose, chapterNumber, classNumber, onVide
         try {
             const response = await apiAxios.post("/video/insert", {
                 videoTitle: title,  // 강사가 입력한 제목
-                videoUrl, // 🔹 videoUrl을 그대로 백엔드로 전송
+                videoUrl, 
                 chapterNumber,
                 classNumber
             });

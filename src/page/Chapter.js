@@ -17,7 +17,7 @@ export default function Chapter({ isEnrolled }) {
     const [loading, setLoading] = useState(false);
 
     const user = useSelector((state) => state.users.value);
-    const { classNumber } = useParams();  // 🔹 강의 번호 가져오기
+    const { classNumber } = useParams();
     const navigate = useNavigate();
 
     const decodeToken = user.token ? jwtDecode(user.token) : "";
