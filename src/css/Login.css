@@ -11,7 +11,7 @@
   align-items: center;
   justify-content: center;
   color: white;
-  background-image: url('/public/img/login.png');
+  background-image: url('../img/login.png');
 }
 
 .login_form_container {
@@ -89,8 +89,12 @@ input{
 
 /* find_pwd */
 .find_pwd{
+  color: #777777;
+  font-weight: bold;
   align-self: flex-end;
   text-decoration: none;
+}
+.login_container p {
   color: #777777;
 }
 /* login button */

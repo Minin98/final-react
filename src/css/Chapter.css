@@ -109,22 +109,23 @@
     background-color: #e28411;
 }
 
-
+/* 퀴즈 시작 버튼 */
+.start-quiz,
 .watch-video {
-    background-color: transparent;
+    background-color: #fff;
+    border: 1px solid #ff8c00;
     color: #ff8c00;
-    padding: 8px 14px;
-    border: 2px solid #ff8c00;
+    padding: 6px 12px;
     border-radius: 5px;
     font-size: 14px;
-    font-weight: bold;
     cursor: pointer;
     transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
 }
 
+.start-quiz:hover,
 .watch-video:hover {
     background-color: #ff8c00;
-    color: white;
+    color: #fff;
 }
 
 .watch-video:disabled {

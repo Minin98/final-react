@@ -1,13 +1,8 @@
 import axios from "axios";
 
 //baseURL, timeout 등 기본 설정을 가진 Axios 인스턴스
-// 현재 실행 중인 환경의 hostname 확인 (localhost 또는 IP 자동 설정)
-const API_BASE_URL = window.location.hostname === "localhost"
-  ? "http://localhost:9999" 
-  : `http://${window.location.hostname}:9999`;
-
 const apiAxios = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: "http://localhost:9999",
   headers: {
     "Content-Type": "application/json",
   },

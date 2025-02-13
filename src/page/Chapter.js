@@ -5,6 +5,8 @@ import "../css/Chapter.css";
 import apiAxios from "../lib/apiAxios";
 import { jwtDecode } from "jwt-decode";
 import VideoWrite from "./VideoWrite";
+import QuizWrite from "./QuizWrite";
+import QuizUpdate from "./QuizUpdate";
 
 export default function Chapter({ isEnrolled }) { 
     const [classInfo, setClassInfo] = useState({});
@@ -15,6 +17,9 @@ export default function Chapter({ isEnrolled }) {
     const [isChapterInsertMode, setIsChapterInsertMode] = useState(false);
     const [chapterNameInput, setChapterNameInput] = useState("");
     const [loading, setLoading] = useState(false);
+    const [isQuizWriteModalOpen, setQuizWriteModalOpen] = useState(false);
+    const [isQuizUpdateModalOpen, setQuizUpdateModalOpen] = useState(false);
+    const [selectedQuiz, setSelectedQuiz] = useState(null);
 
     const user = useSelector((state) => state.users.value);
     const { classNumber } = useParams();
@@ -90,6 +95,24 @@ export default function Chapter({ isEnrolled }) {
         setVideoWriteModalOpen(true);
     };
 
+    // 퀴즈 모달 오픈
+    const openQuizWriteModal = (chapterNumber) => {
+        setSelectedChapter(chapterNumber);
+        setQuizWriteModalOpen(true);
+    };
+
+    // 퀴즈 삭제
+    const deleteQuiz = (chapterNumber) => {
+        apiAxios.delete(`/quiz/${chapterNumber}`)
+            .then((res) => {
+                alert(res.data.msg);
+                fetchClassInfo();
+            })
+            .catch((err) => {
+                console.error("퀴즈 삭제 실패", err);
+            });
+    };
+
     return (
         <div className="chapter-list">
             {loading && <p className="loading-text">로딩 중...</p>}
@@ -103,8 +126,19 @@ export default function Chapter({ isEnrolled }) {
                             <div className="instructor-actions">
                                 <button className="edit-chapter" disabled={loading}>챕터 수정</button>
                                 <button className="delete-chapter" disabled={loading}>챕터 삭제</button>
-                                <button className="quiz-manage" disabled={loading}>퀴즈 등록 및 삭제</button>
+                                {chapter.quizCount > 0 ? (
+                                    <>
+                                        <button className="quiz-manage" onClick={() => setQuizUpdateModalOpen(true)}> 퀴즈 수정 </button>
+                                        <button className="quiz-manage" onClick={() => deleteQuiz(chapter.chapterNumber)}>퀴즈 삭제</button>
+                                    </>
+                                ) : (
+                                    <button className="quiz-manage" onClick={() => openQuizWriteModal(chapter.chapterNumber)}>퀴즈 등록</button>
+                                )}
                             </div>
+                        )}
+                        {/* 퀴즈 풀기 버튼 (수강생 전용) */}
+                        {grade === 2 && (
+                            <button className="start-quiz" onClick={() => navigate(`/quiz/${chapter.chapterNumber}`)}>퀴즈 풀기</button>
                         )}
                     </div>
                     <div className="video-list">
@@ -155,6 +189,8 @@ export default function Chapter({ isEnrolled }) {
             )}
 
             {isVideoWriteModalOpen && <VideoWrite onClose={() => setVideoWriteModalOpen(false)} chapterNumber={selectedChapter} classNumber={classNumber} onVideoAdded={fetchClassInfo} />}
+            {isQuizWriteModalOpen && <QuizWrite chapterNumber={selectedChapter} onClose={() => setQuizWriteModalOpen(false)} />}
+            {isQuizUpdateModalOpen && <QuizUpdate chapterNumber={selectedChapter} quizData={selectedQuiz} onClose={() => setQuizUpdateModalOpen(false)} onQuizUpdated={fetchClassInfo} />}
         </div>
     );
 }

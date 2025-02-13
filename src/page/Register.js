@@ -11,36 +11,38 @@ export default function Register() {
   const nickname = useRef(null);
   const email = useRef(null);
   const phone = useRef(null);
+  const inputCode = useRef(null);
   const [role, setRole] = useState("student");
   const [idValid, setIdValid] = useState(true); // 아이디 유효성 상태
   const [passwordValid, setPasswordValid] = useState(true); // 비밀번호 유효성 상태
   const [confirmPasswordValid, setConfirmPasswordValid] = useState(true); // 비밀번호 확인 유효성 상태
   const [idDuplicate, setIdDuplicate] = useState(false); // 아이디 중복 여부
   const [nicknameDuplicate, setNicknameDuplicate] = useState(false); // 닉네임 중복 여부
+  const [emailValid, setEmailValid] = useState(false); // 이메일 인증 상태
   const navigate = useNavigate();
 
   // 아이디 정규식 (영문, 숫자만 허용, 길이 6~15)
   const idRegex = /^[a-zA-Z0-9]{6,15}$/;
   // 비밀번호 정규식 (영문, 숫자, 특수문자 허용, 길이 6~15)
-  const passwordRegex = /^[a-zA-Z0-9!@#$%^&*()_+={}\[\]:;"'<>,.?/-]{6,15}$/;
+  const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*()_+={}\[\]:;"'<>,.?/-]).{6,15}$/;
 
   // 아이디 유효성 검사
   const checkId = () => {
     if (!idRegex.test(id.current.value)) {
-      setIdValid(false); // 유효하지 않으면 상태 업데이트
+      setIdValid(false);
       return false;
     }
-    setIdValid(true); // 유효하면 상태 업데이트
+    setIdValid(true);
     return true;
   };
 
   // 비밀번호 유효성 검사
   const checkPassword = () => {
     if (!passwordRegex.test(password.current.value)) {
-      setPasswordValid(false); // 유효하지 않으면 상태 업데이트
+      setPasswordValid(false);
       return false;
     }
-    setPasswordValid(true); // 유효하면 상태 업데이트
+    setPasswordValid(true);
     return true;
   };
 
@@ -54,66 +56,111 @@ export default function Register() {
     return true;
   };
 
-  // 아이디 중복 체크 (POST 방식)
+  // 아이디 중복 체크
   const checkIdDuplicate = () => {
-    apiAxios.post("/check/id", { id: id.current.value }).then((res) => {
-      if (res.data) {
-        alert("중복된 아이디입니다. 다른 아이디를 사용해주세요.");
-        setIdDuplicate(true);
-      } else {
-        alert("사용가능한 아이디입니다.");
-        setIdDuplicate(false);
-      }
-    }).catch((err) => console.log(err));
+    apiAxios.post("/check/id", { id: id.current.value })
+      .then((res) => {
+        if (res.data) {
+          alert("중복된 아이디입니다. 다른 아이디를 사용해주세요.");
+          setIdDuplicate(true);
+        } else {
+          alert("사용가능한 아이디입니다.");
+          setIdDuplicate(false);
+        }
+      })
+      .catch((err) => {
+        console.error("아이디 중복 체크 오류:", err);
+        alert("아이디 중복 체크에 실패했습니다.");
+      });
   };
 
-  // 닉네임 중복 체크 (POST 방식)
+  // 닉네임 중복 체크
   const checkNicknameDuplicate = () => {
-    apiAxios.post("/check/nickname", { nickname: nickname.current.value }).then((res) => {
-      if (res.data) {
-        alert("중복된 닉네임 입니다. 다른 닉네임을 사용해주세요.");
-        setNicknameDuplicate(true);
-      } else {
-        alert("사용가능한 닉네임입니다.");
-        setNicknameDuplicate(false);
-      }
-    }).catch((err) => console.log(err));
+    apiAxios.post("/check/nickname", { nickname: nickname.current.value })
+      .then((res) => {
+        if (res.data) {
+          alert("중복된 닉네임입니다. 다른 닉네임을 사용해주세요.");
+          setNicknameDuplicate(true);
+        } else {
+          alert("사용가능한 닉네임입니다.");
+          setNicknameDuplicate(false);
+        }
+      })
+      .catch((err) => {
+        console.error("닉네임 중복 체크 오류:", err);
+        alert("닉네임 중복 체크에 실패했습니다.");
+      });
   };
 
+  // 이메일 인증번호 전송
+  const sendMail = () => {
+    const data = { email: email.current.value };
+    apiAxios.post('/mailSend', data)
+      .then(res => {
+        alert(res.data.msg);
+      })
+      .catch(err => {
+        console.error("이메일 전송 오류:", err);
+        alert("이메일 전송 실패");
+      });
+  };
+
+  // 인증번호 확인
+  const checkAuthCode = () => {
+    const data = { email: email.current.value, inputCode: inputCode.current.value };
+    apiAxios.post('/mailCheck', data)
+      .then(res => {
+        if (res.data) {
+          alert(res.data.msg);
+          setEmailValid(true); // 인증 성공 시 이메일 인증 상태 업데이트
+        } else {
+          alert(res.data.msg);
+          setEmailValid(false);
+        }
+      })
+      .catch(err => {
+        console.error("인증번호 확인 오류:", err);
+        alert("인증번호 확인 실패");
+      });
+  };
+
+  // 유효성 검사 후 폼 제출 가능 여부 판단
   const validateForm = () => {
     const isValidId = checkId();
     const isValidPassword = checkPassword();
     const isValidConfirmPassword = checkConfirmPassword();
 
-    return isValidId && isValidPassword && isValidConfirmPassword && !idDuplicate && !nicknameDuplicate;
+    return isValidId && isValidPassword && isValidConfirmPassword && !idDuplicate && !nicknameDuplicate && emailValid;
   };
 
+  // 회원가입
   const register = () => {
     if (!validateForm()) {
       alert("입력한 정보를 확인해주세요.");
-      return; // 유효성 검사 실패 시 폼 제출을 중단
+      return;
     }
-    apiAxios
-      .post("/register", {
-        id: id.current.value,
-        password: password.current.value,
-        username: username.current.value,
-        nickname: nickname.current.value,
-        email: email.current.value,
-        phone: phone.current.value,
-        role: role,
-      })
+    apiAxios.post("/register", {
+      id: id.current.value,
+      password: password.current.value,
+      username: username.current.value,
+      nickname: nickname.current.value,
+      email: email.current.value,
+      phone: phone.current.value,
+      role: role,
+    })
       .then((res) => {
-        console.log(res.data);
         if (res.data.count !== 0) {
-          // 회원 등록 완료 후 로그인 페이지로 이동
           alert(res.data.msg);
           navigate("/login");
         }
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.error("회원가입 오류:", err);
+        alert("회원가입에 실패했습니다.");
+      });
   };
 
+  // 취소 버튼
   const cancel = () => {
     navigate(-1);
   };
@@ -139,25 +186,25 @@ export default function Register() {
         <form id="signupForm">
           <div className="left_container">
             <div className="form-group">
-              <label>아이디 (숫자, 영문으로 이루어진 6~15자) *  <button type="button" className="check-duplicate-btn" onClick={checkIdDuplicate}>
+              <label>아이디 (숫자, 영문으로 이루어진 6~15자) * <button type="button" className="check-duplicate-btn" onClick={checkIdDuplicate}>
                 아이디 중복 확인
               </button></label>
               <input
                 type="text"
                 ref={id}
                 required
-                onBlur={checkId} // 아이디 체크
+                onBlur={checkId}
               />
               {!idValid && <p className="error-message">아이디는 영문과 숫자로 이루어진 6~15자여야 합니다.</p>}
               {idDuplicate && <p className="error-message">아이디가 이미 존재합니다.</p>}
             </div>
             <div className="form-group">
-              <label>비밀번호 (숫자, 영문으로 이루어진 6~15자) *</label>
+              <label>비밀번호 (영문, 숫자, 특수문자 포함 6~15자) *</label>
               <input
                 type="password"
                 ref={password}
                 required
-                onBlur={checkPassword} // 비밀번호 체크
+                onBlur={checkPassword}
               />
               {!passwordValid && <p className="error-message">비밀번호는 영문, 숫자, 특수문자 포함 6~15자여야 합니다.</p>}
             </div>
@@ -167,7 +214,7 @@ export default function Register() {
                 type="password"
                 ref={checkPwd}
                 required
-                onBlur={checkConfirmPassword} // 비밀번호 확인 체크
+                onBlur={checkConfirmPassword}
               />
               {!confirmPasswordValid && <p className="error-message">비밀번호가 일치하지 않습니다.</p>}
             </div>
@@ -182,15 +229,27 @@ export default function Register() {
                 닉네임 중복 확인
               </button></label>
               <input type="text" ref={nickname} />
-
               {nicknameDuplicate && <p className="error-message">닉네임이 이미 존재합니다.</p>}
             </div>
             <div className="form-group">
-              <label>이메일 *</label>
+              <label>이메일 * <button type="button" className="check-duplicate-btn" onClick={sendMail}>
+                인증번호 전송
+              </button></label>
               <input
                 type="email"
                 ref={email}
                 placeholder="이메일을 입력해주세요."
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label>인증번호 * <button type="button" className="check-duplicate-btn" onClick={checkAuthCode}>
+                인증번호 확인
+              </button></label>
+              <input
+                type="text"
+                ref={inputCode}
+                placeholder="인증번호를 입력해주세요."
                 required
               />
             </div>
@@ -203,7 +262,7 @@ export default function Register() {
               />
             </div>
           </div>
-            <p className="required-note">* 표시는 필수 입력입니다.</p>
+          <p className="required-note">* 표시는 필수 입력입니다.</p>
           <div className="btn-container">
             <button type="button" className="submit-btn" onClick={register}>
               회원가입

@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { saveToken, saveState, selectRole } from '../store/KakaoSlice';
-import axios from 'axios';
+import { selectRole } from '../store/KakaoSlice';
 import { jwtDecode } from 'jwt-decode';
 import { saveInfo } from '../store/UsersSlice';
 import apiAxios from '../lib/apiAxios';

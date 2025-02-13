@@ -11,7 +11,7 @@ import { jwtDecode } from "jwt-decode";
 export default function ClassPage() {
     const { classNumber } = useParams();
     const navigate = useNavigate();
-    const [activeMenu, setActiveMenu] = useState("chapter");
+    const [activeMenu, setActiveMenu] = useState("chapter"); // 기본값 chapter
     const [classInfo, setClassInfo] = useState({});
     const [showUpdateModal, setShowUpdateModal] = useState(false);
     const [loading, setLoading] = useState(true);
@@ -22,6 +22,7 @@ export default function ClassPage() {
     const grade = decodeToken?.grade || (decodeToken?.roles === "강사" ? 1 : decodeToken?.roles === "학생" ? 2 : 3);
     const isClassOwner = classInfo?.uno && decodeToken?.sub && grade === 1 && String(decodeToken.sub) === String(classInfo?.uno);
 
+    // 강의 정보 불러오기
     const fetchClassInfo = useCallback(() => {
         setLoading(true);
         apiAxios.get(`/class/${classNumber}`)
@@ -38,10 +39,8 @@ export default function ClassPage() {
 
     // 수강 여부 확인
     const checkEnrollmentStatus = useCallback(() => {
-        apiAxios.get(`/users-progress/check?classNumber=${classNumber}`, {
-            headers: {
-                "Authorization": `Bearer ${user.token}`
-            }
+        apiAxios.get(`/usersProgress/check?classNumber=${classNumber}`, {
+            headers: { "Authorization": `Bearer ${user.token}` }
         })
         .then((res) => {
             setIsEnrolled(res.data.isEnrolled);
@@ -56,7 +55,7 @@ export default function ClassPage() {
             return;
         }
         fetchClassInfo();
-        checkEnrollmentStatus(); // 수강 여부 확인
+        checkEnrollmentStatus();
     }, [fetchClassInfo, checkEnrollmentStatus, classNumber, navigate]);
 
     const handleMenuChange = (menu) => {
@@ -65,7 +64,7 @@ export default function ClassPage() {
 
     // "강의 수강하기" 버튼
     const enrollClass = () => {
-        apiAxios.post(`/users-progress/application?classNumber=${classNumber}`, {}, {
+        apiAxios.post(`/usersProgress/application?classNumber=${classNumber}`, {}, {
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${user.token}`
@@ -80,7 +79,7 @@ export default function ClassPage() {
 
     // "수강 취소" 버튼
     const handleCancelEnrollment = () => {
-        apiAxios.delete(`/users-progress/cancel?classNumber=${classNumber}`, {
+        apiAxios.delete(`/usersProgress/cancel?classNumber=${classNumber}`, {
             headers: { "Authorization": `Bearer ${user.token}` }
         })
         .then(() => {
@@ -88,6 +87,29 @@ export default function ClassPage() {
             setIsEnrolled(false);
         })
         .catch((err) => console.error("수강 취소 실패", err));
+    };
+
+    // 강의 삭제
+    const deleteClass = () => {
+        apiAxios.delete(`/class/${classNumber}`, {
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${user.token}`
+            }
+        })
+        .then(res => {
+            alert(res.data.msg);
+            if (res.data.code === 1) {
+                navigate('/classList');
+            }
+        })
+        .catch(err => console.log(err));
+    };
+
+    // 강의 수정 후 새로고침
+    const updateHandler = () => {
+        fetchClassInfo();
+        navigate(`/class/${classNumber}`);
     };
 
     return (
@@ -107,7 +129,7 @@ export default function ClassPage() {
                 {isClassOwner && (
                     <div className="instructor-controls">
                         <button className="class-modify-button" onClick={() => setShowUpdateModal(true)}>강의 수정</button>
-                        <button className="class-delete-button" onClick={() => console.log("강의 삭제")}>강의 삭제</button>
+                        <button className="class-delete-button" onClick={deleteClass}>강의 삭제</button>
                     </div>
                 )}
                 {grade === 2 && (
@@ -117,7 +139,7 @@ export default function ClassPage() {
                         </button>
                     ) : (
                         <button className="class-enroll-button" onClick={enrollClass}>
-                            강의 수강하기
+                            수강 신청
                         </button>
                     )
                 )}
@@ -125,33 +147,13 @@ export default function ClassPage() {
 
             {/* 강의 메뉴 */}
             <div className="class-menu">
-                <button
-                    className={activeMenu === "chapter" ? "active" : ""}
-                    onClick={() => handleMenuChange("chapter")}
-                >
-                    챕터 목록
-                </button>
-                <button
-                    className={activeMenu === "notice" ? "active" : ""}
-                    onClick={() => handleMenuChange("notice")}
-                >
-                    공지사항
-                </button>
-                <button
-                    className={activeMenu === "qna" ? "active" : ""}
-                    onClick={() => handleMenuChange("qna")}
-                >
-                    Q&A
-                </button>
-                <button
-                    className={activeMenu === "rate" ? "active" : ""}
-                    onClick={() => handleMenuChange("rate")}
-                >
-                    수강평
-                </button>
+                <button className={activeMenu === "chapter" ? "active" : ""} onClick={() => handleMenuChange("chapter")}>챕터 목록</button>
+                <button className={activeMenu === "notice" ? "active" : ""} onClick={() => handleMenuChange("notice")}>공지사항</button>
+                <button className={activeMenu === "qna" ? "active" : ""} onClick={() => handleMenuChange("qna")}>Q&A</button>
+                <button className={activeMenu === "rate" ? "active" : ""} onClick={() => handleMenuChange("rate")}>수강평</button>
             </div>
 
-            {/* Chapter에 isEnrolled 상태 전달 (즉시 반영) */}
+            {/* 강의 컨텐츠 */}
             <div className="class-content">
                 {activeMenu === "chapter" && <Chapter classNumber={classNumber} isEnrolled={isEnrolled} />}
                 {activeMenu === "notice" && <Notice classNumber={classNumber} />}
@@ -159,7 +161,7 @@ export default function ClassPage() {
                 {activeMenu === "rate" && <Notice classNumber={classNumber} />}
             </div>
 
-            {showUpdateModal && <ClassUpdate classInfo={classInfo} onClose={() => setShowUpdateModal(false)} />}
+            {showUpdateModal && <ClassUpdate classInfo={classInfo} onClose={() => setShowUpdateModal(false)} onClassUpdated={updateHandler} />}
         </div>
     );
 }

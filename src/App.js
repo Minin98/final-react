@@ -14,6 +14,10 @@ import Mypage from './page/Mypage';
 import ClassPage from './page/ClassPage';
 import Notice from './page/Notice';
 import VideoPage from './page/VideoPage';
+import Mail from './page/FindIdPage';
+import FindIdPage from './page/FindIdPage';
+import FindPwdPage from './page/FindPwdPage';
+import Quiz from './page/Quiz';
 
 function Layout() {
   const location = useLocation();
@@ -34,7 +38,11 @@ function Layout() {
         <Route path='/mypage/updateinfo' element={<UserUpdate />} />
         <Route path='/class/:classNumber' element={<ClassPage />} />
         <Route path='/class/:classNumber/notice' element={<Notice />} />
-        <Route path='/video/:videoNumber' element={<VideoPage />} /> 
+        <Route path='/video/:videoNumber' element={<VideoPage />} />
+        <Route path='/email' element={<Mail />} />
+        <Route path='/find/id' element={<FindIdPage />} />
+        <Route path='/find/pwd' element={<FindPwdPage />} />
+        <Route path='/quiz/:chapterNumber' element={<Quiz />} />
       </Routes>
       {!hideHeaderFooter && <footer />}
     </>

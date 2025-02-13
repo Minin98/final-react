@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import apiAxios from "../lib/apiAxios";
@@ -54,20 +54,18 @@ export default function Notice() {
         setIsModalOpen(false);
     };
 
-    const fetchNotices = useCallback(async () => {
+    const fetchNotices = async () => {
         try {
             const response = await apiAxios.get(`/class/${classNumber}/notice`);
             setNotice(response.data);
         } catch (error) {
             console.error("공지사항 목록을 가져오는 중 오류가 발생했습니다.", error);
         }
-    }, [classNumber]);  // `classNumber`가 변경될 때만 새로 생성됨
-    
+    };
+
     useEffect(() => {
         fetchNotices();
-    }, [fetchNotices]);  // `fetchNotices`를 의존성 배열에 추가
-    
-
+    }, []);
 
     const handleNoticeAdded = () => {
         fetchNotices(); // 공지 등록 후 목록을 새로고침

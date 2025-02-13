@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
-import apiAxios from "../lib/apiAxios";  // fetch 대신 axios 사용
+import apiAxios from "../lib/apiAxios";
 import "../css/Main.css";
 
 export default function Main() {

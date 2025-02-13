@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import "../css/Register.css";
+import "../css/KakaoRegister.css";
 import apiAxios from "../lib/apiAxios";
 import { clearInfo, saveInfo } from "../store/UsersSlice";
 import { useDispatch } from "react-redux";
@@ -60,7 +60,7 @@ export default function Register() {
   };
 
   return (
-    <div className="register">
+    <div className="kakao-register">
       <div className="register_container">
         <h2>수강생 또는 강사로 회원가입 후 서비스를 이용하세요.</h2>
         <div className="role-switch">
@@ -77,39 +77,38 @@ export default function Register() {
             강사
           </button>
         </div>
-        <form id="signupForm">
-          <div className="right_container">
-            <div className="form-group">
-              <label>이름 *</label>
-              <input type="text" ref={username} required />
-            </div>
-            <div className="form-group">
-              <label>닉네임 * <button type="button" className="check-duplicate-btn" onClick={checkNicknameDuplicate}>
-                닉네임 중복 확인
-              </button></label>
-              <input type="text" ref={nickname} />
-              {nicknameDuplicate && <p className="error-message">닉네임이 이미 존재합니다.</p>}
-            </div>
-            <div className="form-group">
-              <label>이메일 *</label>
-              <input type="email" value={email} readOnly /> {/* 이메일 수정 불가능 */}
-            </div>
-            <div className="form-group">
-              <label>전화번호 *</label>
-              <input type="text" ref={phone} placeholder="'-'를 제외하고 숫자만 입력해주세요." />
-            </div>
-            <input type="hidden" value={kakaoId} /> {/* 카카오 ID 숨김 처리 */}
+        <div className="right_container">
+          <div className="form-group">
+            <label>이름 *</label>
+            <input type="text" ref={username} required />
           </div>
+          <div className="form-group">
+            <label>닉네임 * <button type="button" className="check-duplicate-btn" onClick={checkNicknameDuplicate}>
+              닉네임 중복 확인
+            </button></label>
+            <input type="text" ref={nickname} />
+            {nicknameDuplicate && <p className="error-message">닉네임이 이미 존재합니다.</p>}
+          </div>
+          <div className="form-group">
+            <label>이메일 *</label>
+            <input type="email" value={email} readOnly /> {/* 이메일 수정 불가능 */}
+          </div>
+          <div className="form-group">
+            <label>전화번호 *</label>
+            <input type="text" ref={phone} placeholder="'-'를 제외하고 숫자만 입력해주세요." />
+          </div>
+          <input type="hidden" value={kakaoId} /> {/* 카카오 ID 숨김 처리 */}
           <p className="required-note">* 표시는 필수 입력입니다.</p>
-          <div className="btn-container">
-            <button type="button" className="submit-btn" onClick={register}>
-              회원가입
-            </button>
-            <button type="button" className="cancel-btn" onClick={cancel}>
-              취소
-            </button>
-          </div>
-        </form>
+          <button type="button" className="submit-btn" onClick={register}>
+            회원가입
+          </button>
+          <button type="button" className="cancel-btn" onClick={cancel}>
+            취소
+          </button>
+        </div>
+        <div className="btn-container">
+
+        </div>
       </div>
     </div>
   );
