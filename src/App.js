@@ -18,6 +18,8 @@ import Mail from './page/FindIdPage';
 import FindIdPage from './page/FindIdPage';
 import FindPwdPage from './page/FindPwdPage';
 import Quiz from './page/Quiz';
+import QNA from './page/QNA';
+import QNAWrite from './page/QNAWrite';
 
 function Layout() {
   const location = useLocation();
@@ -43,6 +45,8 @@ function Layout() {
         <Route path='/find/id' element={<FindIdPage />} />
         <Route path='/find/pwd' element={<FindPwdPage />} />
         <Route path='/quiz/:chapterNumber' element={<Quiz />} />
+        <Route path='/class/:classNumber/qna' element={<QNA />} />
+        <Route path='/class/:classNumber/qna/write' element={<QNAWrite />} />
       </Routes>
       {!hideHeaderFooter && <footer />}
     </>
