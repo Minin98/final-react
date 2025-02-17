@@ -48,7 +48,7 @@
 }
 
 /* 챕터 추가 입력창 스타일 수정 */
-.add-chapter-input {
+.add-chapter-input, .update-chapter-container {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -58,7 +58,7 @@
 }
 
 /* 챕터 제목 입력 필드 */
-.add-chapter-input input {
+.add-chapter-input input, .update-chapter-container input {
     flex: 1;
     padding: 8px;
     border: 1px solid #ddd;
@@ -69,7 +69,7 @@
 }
 
 /* 챕터 등록 버튼 */
-.confirm-add-chapter {
+.confirm-add-chapter, .update-chapter-btn {
     background-color: #ff8c00;
     color: white;
     padding: 8px 12px;
@@ -80,12 +80,12 @@
     transition: background-color 0.2s ease-in-out;
 }
 
-.confirm-add-chapter:hover {
+.confirm-add-chapter:hover, .update-chapter-btn:hover {
     background-color: #e28411;
 }
 
 /* 챕터 취소 버튼 */
-.cancel-add-chapter {
+.cancel-add-chapter, .cancel-update-chapter-btn {
     background-color: #ddd;
     color: black;
     padding: 8px 12px;
@@ -96,7 +96,7 @@
     transition: background-color 0.2s ease-in-out;
 }
 
-.cancel-add-chapter:hover {
+.cancel-add-chapter:hover, .cancel-update-chapter-btn:hover {
     background-color: #bbb;
 }
 

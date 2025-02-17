@@ -21,6 +21,9 @@ export default function Chapter({ isEnrolled }) {
     const [isQuizUpdateModalOpen, setQuizUpdateModalOpen] = useState(false);
     const [selectedQuiz] = useState(null);
 
+    const [isUpdatingChapter, setIsUpdatingChapter] = useState(null);
+    const [updatedChapterName, setUpdatedChapterName] = useState("");
+
     const user = useSelector((state) => state.users.value);
     const { classNumber } = useParams();
     const navigate = useNavigate();
@@ -89,6 +92,50 @@ export default function Chapter({ isEnrolled }) {
             });
     };
 
+    // 챕터 수정 시작
+    const startUpdateChapter = (chapter) => {
+        setIsUpdatingChapter(chapter.chapterNumber);
+        setUpdatedChapterName(chapter.chapterName);
+    };
+
+    // 챕터 수정 취소
+    const cancelUpdateChapter = () => {
+        setIsUpdatingChapter(null);
+        setUpdatedChapterName("");
+    };
+
+    // 챕터 수정
+    const saveChapterUpdate = (chapterNumber) => {
+        if (!updatedChapterName.trim()) return;
+
+        apiAxios.put(`/chapter/update/${chapterNumber}`, { chapterName: updatedChapterName }, {
+            headers: { "Authorization": `Bearer ${user.token}` }
+        })
+            .then(() => {
+                fetchClassInfo();
+                setIsUpdatingChapter(null);
+            })
+            .catch((err) => console.error("챕터 수정 실패:", err));
+    };
+
+    // 챕터 삭제
+    const deleteChapter = (chapter) => {
+        const videoCount = getVideoCount(chapter.chapterNumber);
+        const confirmationMessage = videoCount > 0
+            ? `${videoCount}개의 영상과 퀴즈가 삭제됩니다. 삭제 하시겠습니까?`
+            : "챕터를 삭제하시겠습니까?";
+
+        if (!window.confirm(confirmationMessage)) return;
+
+        setLoading(true);
+        apiAxios.delete(`/chapter/delete/${chapter.chapterNumber}`, {
+            headers: { "Authorization": `Bearer ${user.token}` }
+        })
+            .then(() => fetchClassInfo()) // 최신 챕터 목록 다시 불러오기
+            .catch((err) => console.error("챕터 삭제 실패:", err))
+            .finally(() => setLoading(false));
+    };
+
     // 비디오 추가 모드 ON
     const openVideoWriteModal = (chapterNumber) => {
         setSelectedChapter(chapterNumber);
@@ -116,48 +163,57 @@ export default function Chapter({ isEnrolled }) {
     return (
         <div className="chapter-list">
             {loading && <p className="loading-text">로딩 중...</p>}
-    
+
             {!loading &&
                 chapters.map((chapter) => (
                     <div className="chapter" key={chapter.chapterNumber}>
                         <div className="chapter-header">
-                            <h3 title={chapter?.chapterName}>{chapter?.chapterName || "제목 없음"}</h3>
-    
-                            {/* 강의 개수 표시 */}
-                            <div className="lecture-count-container">
-                                <p className="lecture-count">{getVideoCount(chapter.chapterNumber)}개의 강의</p>
-                            </div>
-    
-                            {/* 강사 전용 버튼 */}
-                            {isClassOwner && (
-                                <div className="instructor-actions">
-                                    <button className="edit-chapter" disabled={loading}>챕터 수정</button>
-                                    <button className="delete-chapter" disabled={loading}>챕터 삭제</button>
-                                    {chapter.quizCount > 0 ? (
-                                        <>
-                                            <button className="quiz-manage" onClick={() => setQuizUpdateModalOpen(true)}> 퀴즈 수정 </button>
-                                            <button className="quiz-manage" onClick={() => deleteQuiz(chapter.chapterNumber)}>퀴즈 삭제</button>
-                                        </>
-                                    ) : (
-                                        <button className="quiz-manage" onClick={() => openQuizWriteModal(chapter.chapterNumber)}>퀴즈 등록</button>
-                                    )}
+                            {isUpdatingChapter === chapter.chapterNumber ? (
+                                <div className="update-chapter-container">
+                                    <input
+                                        type="text"
+                                        value={updatedChapterName}
+                                        onChange={(e) => setUpdatedChapterName(e.target.value)}
+                                    />
+                                    <button className="update-chapter-btn" onClick={() => saveChapterUpdate(chapter.chapterNumber)}>확인</button>
+                                    <button className="cancel-update-chapter-btn" onClick={cancelUpdateChapter}>취소</button>
                                 </div>
-                            )}
-    
-                            {/* 학생 전용 버튼 */}
-                            {grade === 2 && (
-                                <button className="start-quiz" onClick={() => navigate(`/quiz/${chapter.chapterNumber}`)}>퀴즈 풀기</button>
+                            ) : (
+                                <>
+                                    <h3 title={chapter?.chapterName}>{chapter?.chapterName || "제목 없음"}</h3>
+                                    <div className="lecture-count-container">
+                                        <p className="lecture-count">{getVideoCount(chapter.chapterNumber)}개의 강의</p>
+                                    </div>
+
+                                    {isClassOwner && !isUpdatingChapter && (
+                                        <div className="instructor-actions">
+                                            <button className="edit-chapter" onClick={() => startUpdateChapter(chapter)}>챕터 수정</button>
+                                            <button className="delete-chapter" onClick={() => deleteChapter(chapter)} disabled={loading}>챕터 삭제</button>
+                                            {chapter.quizCount > 0 ? (
+                                                <>
+                                                    <button className="quiz-manage" onClick={() => setQuizUpdateModalOpen(true)}>퀴즈 수정</button>
+                                                    <button className="quiz-manage" onClick={() => deleteQuiz(chapter.chapterNumber)}>퀴즈 삭제</button>
+                                                </>
+                                            ) : (
+                                                <button className="quiz-manage" onClick={() => openQuizWriteModal(chapter.chapterNumber)}>퀴즈 등록</button>
+                                            )}
+                                        </div>
+                                    )}
+
+                                    {grade === 2 && (
+                                        <button className="start-quiz" onClick={() => navigate(`/quiz/${chapter.chapterNumber}`)}>퀴즈 풀기</button>
+                                    )}
+                                </>
                             )}
                         </div>
-    
-                        {/* 영상 목록 */}
+
                         <div className="video-list">
                             {videos[chapter.chapterNumber]?.map((video) => (
                                 <div className="video-item" key={video.videoNumber}>
                                     <span className="video-title" title={video.videoTitle}>{video.videoTitle || "영상 제목 없음"}</span>
                                     <span className="video-duration">{formatDuration(video.videoDuration)}</span>
-    
-                                    {isClassOwner ? (
+
+                                    {isClassOwner && !isUpdatingChapter ? (
                                         <div className="instructor-video-controls">
                                             <button className="edit-video" disabled={loading}>수정</button>
                                             <button className="delete-video" disabled={loading}>삭제</button>
@@ -167,14 +223,14 @@ export default function Chapter({ isEnrolled }) {
                                     ) : null}
                                 </div>
                             ))}
-                            {isClassOwner && (
+                            {isClassOwner && !isUpdatingChapter && (
                                 <button className="add-video" onClick={() => openVideoWriteModal(chapter.chapterNumber)} disabled={loading}>동영상 추가</button>
                             )}
                         </div>
                     </div>
                 ))}
-    
-            {isClassOwner && (
+
+            {isClassOwner && !isUpdatingChapter && (
                 <>
                     {!isChapterInsertMode ? (
                         <button className="add-chapter" onClick={toggleChapterInsertMode} disabled={loading}>챕터 추가</button>
@@ -187,12 +243,13 @@ export default function Chapter({ isEnrolled }) {
                     )}
                 </>
             )}
-    
+
             {isVideoWriteModalOpen && <VideoWrite onClose={() => setVideoWriteModalOpen(false)} chapterNumber={selectedChapter} classNumber={classNumber} onVideoAdded={fetchClassInfo} />}
             {isQuizWriteModalOpen && <QuizWrite chapterNumber={selectedChapter} onClose={() => setQuizWriteModalOpen(false)} />}
             {isQuizUpdateModalOpen && <QuizUpdate chapterNumber={selectedChapter} quizData={selectedQuiz} onClose={() => setQuizUpdateModalOpen(false)} onQuizUpdated={fetchClassInfo} />}
         </div>
     );
-    
+
+
 
 }
