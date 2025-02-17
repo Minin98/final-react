@@ -17,8 +17,10 @@ export default function Main() {
         const updatedClasses = res.data.latestClasses.map(classItem => ({
           ...classItem,
           thumbnail: classItem.thumbnail
-            ? `http://${window.location.hostname}:9999/class/thumbnail/${classItem.thumbnail}`
-            : "/img/default_thumbnail.jpg"  // API로 썸네일 제공
+            ? (classItem.thumbnail.startsWith("data:image") 
+                ? classItem.thumbnail 
+                : `data:image/png;base64,${classItem.thumbnail}`)
+            : "/img/default_thumbnail.jpg"  // 기본 썸네일 제공
         }));
         setLatestClasses(updatedClasses);
       })

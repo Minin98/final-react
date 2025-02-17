@@ -6,23 +6,33 @@ export default function VideoWrite({ onClose, chapterNumber, classNumber, onVide
     const [title, setTitle] = useState("");
     const [videoUrl, setVideoUrl] = useState("");
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
 
-    // 입력 값 변경 핸들러
-    const handleChangeTitle = (e) => setTitle(e.target.value);
-    const handleChangeVideoUrl = (e) => setVideoUrl(e.target.value);
+    // 유튜브 URL 검증 함수
+    const isValidYouTubeUrl = (url) => {
+        const regex = /^(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/shorts\/)([a-zA-Z0-9_-]{11})/;
+        return regex.test(url);
+    };
 
     // "등록" 버튼 클릭 시 실행
     const handleSubmit = async () => {
         if (!title.trim() || !videoUrl.trim()) {
-            alert("동영상 제목과 URL을 입력해주세요.");
+            setError("동영상 제목과 URL을 입력해주세요.");
+            return;
+        }
+
+        // 유튜브 URL 검증
+        if (!isValidYouTubeUrl(videoUrl)) {
+            setError("올바른 유튜브 URL을 입력해주세요.");
             return;
         }
 
         setLoading(true);
+        setError("");
 
         try {
             const response = await apiAxios.post("/video/insert", {
-                videoTitle: title,  // 강사가 입력한 제목
+                videoTitle: title,
                 videoUrl, 
                 chapterNumber,
                 classNumber
@@ -33,11 +43,11 @@ export default function VideoWrite({ onClose, chapterNumber, classNumber, onVide
                 onVideoAdded(); // 부모 컴포넌트에서 목록 갱신
                 onClose(); // 모달 닫기
             } else {
-                alert(response.data.message);
+                setError(response.data.message);
             }
         } catch (error) {
             console.error("영상 등록 실패:", error);
-            alert("영상 등록 중 오류가 발생했습니다.");
+            setError("영상 등록 중 오류가 발생했습니다.");
         } finally {
             setLoading(false);
         }
@@ -47,17 +57,18 @@ export default function VideoWrite({ onClose, chapterNumber, classNumber, onVide
         <div className="video-write-modal">
             <div className="video-write-container">
                 <h2>동영상 강의 등록</h2>
+                {error && <p className="error-text">{error}</p>}
                 <input
                     type="text"
-                    placeholder="동영상 제목을 입력 해주세요."
+                    placeholder="동영상 제목을 입력하세요."
                     value={title}
-                    onChange={handleChangeTitle}
+                    onChange={(e) => setTitle(e.target.value)}
                 />
                 <input
                     type="text"
-                    placeholder="유튜브 영상 URL을 입력 해주세요."
+                    placeholder="유튜브 영상 URL을 입력하세요."
                     value={videoUrl}
-                    onChange={handleChangeVideoUrl}
+                    onChange={(e) => setVideoUrl(e.target.value)}
                 />
                 <div className="video-write-buttons">
                     <button onClick={handleSubmit} className="submit-btn" disabled={loading}>

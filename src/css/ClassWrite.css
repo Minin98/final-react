@@ -85,7 +85,7 @@
     font-size: 14px;
     font-weight: bold;
     text-align: left;
-    margin-right: auto;
+    margin-right: 100px;
 }
 
 /* 썸네일 취소 버튼 항상 보이도록 */
@@ -96,7 +96,6 @@
     font-size: 14px;
     cursor: pointer;
     text-decoration: underline;
-    margin-left: 170px;
     visibility: visible;
 }
 
@@ -178,4 +177,8 @@
     background: #FF8D00;
     border: none;
     color: #FFFFFF;
+}
+
+input[type="file"] {
+    display: none;
 }

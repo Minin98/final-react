@@ -14,20 +14,23 @@ const VideoPage = () => {
     const [classNumber, setClassNumber] = useState(null); // 강의 번호
 
     useEffect(() => {
+        // 영상 정보 불러오기
         apiAxios.get(`/video/${videoNumber}`)
             .then((response) => {
-                console.log("API 응답 데이터:", response.data);
-    
                 if (response.data.code === 1) {
                     const videoData = response.data.video;
                     setVideoInfo(videoData);
-                    setPrevVideoId(response.data.prevVideoId ?? null);
-                    setNextVideoId(response.data.nextVideoId ?? null);
-                    
                     setClassTitle(response.data.classTitle ?? "강의 정보 없음");
                     setChapterTitle(response.data.chapterTitle ?? "챕터 정보 없음");
                     setClassNumber(videoData.classNumber);
-                    console.log("강의 제목:", response.data.classTitle);
+
+                    // 이전/다음 영상 정보 불러오기
+                    apiAxios.get(`/video/${videoNumber}/navigation/${videoData.classNumber}`)
+                        .then((navResponse) => {
+                            setPrevVideoId(navResponse.data.prevVideoId ?? null);
+                            setNextVideoId(navResponse.data.nextVideoId ?? null);
+                        })
+                        .catch((error) => console.error("이전/다음 영상 정보 조회 실패:", error));
                 } else {
                     console.error("API 응답 오류:", response.data.message);
                 }
@@ -36,10 +39,8 @@ const VideoPage = () => {
                 console.error("영상 정보를 불러오는 데 실패했습니다.", error);
             });
     }, [videoNumber]);
-    
-    
 
-    if (!videoInfo) {
+    if (!videoInfo || !videoInfo.videoId) {
         return <div className="video-loading">영상 정보를 불러올 수 없습니다.</div>;
     }
 
@@ -47,7 +48,7 @@ const VideoPage = () => {
         <div className="video-fullscreen-container">
             {/* 상단 네비게이션 바 */}
             <div className="video-header">
-                <button className="back-button" onClick={() => navigate(`/class/${classNumber}`)}>←</button>
+                <button className="back-button" onClick={() => navigate(`/class/${classNumber}`)}></button>
                 <div className="video-info">
                     <span>{classTitle}</span>
                     <span> | </span>
@@ -72,22 +73,23 @@ const VideoPage = () => {
 
             {/* 네비게이션 버튼 */}
             <div className="video-navigation">
-                <span 
+                <span
                     className="nav-button prev"
                     onClick={prevVideoId ? () => navigate(`/video/${prevVideoId}`) : undefined}
-                    style={{ opacity: prevVideoId ? 1 : 0.3 }}
+                    style={{ opacity: prevVideoId ? 1 : 0.3, cursor: prevVideoId ? "pointer" : "default" }}
                 >
-                    ← 이전 영상
+                    <span className="nav-arrow"></span> 이전 영상
                 </span>
 
-                <span 
+                <span
                     className="nav-button next"
                     onClick={nextVideoId ? () => navigate(`/video/${nextVideoId}`) : undefined}
-                    style={{ opacity: nextVideoId ? 1 : 0.3 }}
+                    style={{ opacity: nextVideoId ? 1 : 0.3, cursor: nextVideoId ? "pointer" : "default" }}
                 >
-                    다음 영상 →
+                    다음 영상 <span className="nav-arrow"></span>
                 </span>
             </div>
+
         </div>
     );
 };

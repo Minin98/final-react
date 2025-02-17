@@ -35,10 +35,8 @@ export default function ClassList() {
 
       sortedClasses = sortedClasses.map(classItem => ({
         ...classItem,
-        thumbnail: classItem.thumbnail
-          ? `http://${window.location.hostname}:9999/class/thumbnail/${classItem.thumbnail}`
-          : "/img/default_thumbnail.png" // API를 통해 이미지 제공
-      }));
+        thumbnail: classItem.thumbnail?.startsWith("data:image") ? classItem.thumbnail : "/img/default_thumbnail.png"
+    }));
 
       setClasses(sortedClasses);
     } catch (error) {

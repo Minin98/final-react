@@ -1,12 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import apiAxios from "../lib/apiAxios";
 import { useSelector } from "react-redux";
 import { jwtDecode } from "jwt-decode";
 import "../css/ClassUpdate.css";
-import { useEffect } from "react";
 
 export default function ClassUpdate({ classInfo, onClose, onClassUpdated }) {
-    const [classNumber, setClassNumber] = useState(classInfo.classNumber);
+    const [classNumber] = useState(classInfo.classNumber);
     const [title, setTitle] = useState(classInfo.title);
     const [description, setDescription] = useState(classInfo.description);
     const [category, setCategory] = useState(classInfo.category);
@@ -15,17 +14,21 @@ export default function ClassUpdate({ classInfo, onClose, onClassUpdated }) {
     const [loading, setLoading] = useState(false);
     const user = useSelector((state) => state.users.value);
 
-
     useEffect(() => {
-        if (classInfo?.category) {
-            setCategory(classInfo.category);
+        if (classInfo?.thumbnail) {
+            setThumbnail(classInfo.thumbnail.startsWith("data:image") 
+                ? classInfo.thumbnail 
+                : `data:image/png;base64,${classInfo.thumbnail}`);
         }
     }, [classInfo]);
 
-
     const handleThumbnailUpload = (file) => {
         if (file && file.type.startsWith("image/")) {
-            setThumbnail(file);
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onloadend = () => {
+                setThumbnail(reader.result); // Base64 데이터 저장
+            };
         }
     };
 
@@ -67,20 +70,20 @@ export default function ClassUpdate({ classInfo, onClose, onClassUpdated }) {
             return;
         }
 
-
-        const params = JSON.stringify({ title, description, category, uno, classNumber });
-
-        const formData = new FormData();
-        formData.append("params", params);
-        if (thumbnail) {
-            formData.append("thumbnail", thumbnail);
-        }
+        const requestData = {
+            classNumber,
+            title,
+            description,
+            category,
+            uno,
+            thumbnail: thumbnail || classInfo.thumbnail,
+        };
 
         try {
-            const response = await apiAxios.post(`/class/update`, formData, {
+            const response = await apiAxios.post(`/class/update`, requestData, {
                 headers: {
                     "Authorization": `Bearer ${user.token}`,
-                    "Content-Type": "multipart/form-data"
+                    "Content-Type": "application/json"
                 }
             });
 
@@ -125,7 +128,6 @@ export default function ClassUpdate({ classInfo, onClose, onClassUpdated }) {
                 </select>
 
                 <div className="class-update-form">
-
                     <label className="class-update-label-title">강의 제목</label>
                     <input type="text" className="class-update-input" value={title} onChange={(e) => setTitle(e.target.value)} />
 
@@ -150,7 +152,7 @@ export default function ClassUpdate({ classInfo, onClose, onClassUpdated }) {
                 >
                     {thumbnail ? (
                         <div className="thumbnail-preview">
-                            <img src={URL.createObjectURL(thumbnail)} alt="썸네일 미리보기" />
+                            <img src={thumbnail} alt="썸네일 미리보기" />
                         </div>
                     ) : (
                         <p className="thumbnail-plus">+</p>

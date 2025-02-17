@@ -31,12 +31,15 @@
 .back-button {
     position: absolute;
     left: 20px;
-    font-size: 1.5rem;
-    background: none;
-    color: white;
+    width: 40px;
+    height: 40px;
+    background: url('/public/img/icon_Go_back.png');
+    background-size: contain;
     border: none;
     cursor: pointer;
     transition: 0.3s;
+    transform: rotate(180deg);
+    filter: invert(1);
 }
 
 .back-button:hover {
@@ -49,7 +52,7 @@
     align-items: center;
     justify-content: center;
     gap: 20px;
-    font-size: 1.2rem;
+    font-size: 1.4rem;
     white-space: nowrap;
 }
 
@@ -74,8 +77,11 @@
     gap: 100px;
 }
 
-/* 이전/다음 영상 버튼 */
+/* 이전/다음 영상 버튼 공통 */
 .nav-button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     font-size: 1.2rem;
     color: white;
     cursor: pointer;
@@ -91,3 +97,18 @@
 .nav-button[style*="opacity: 0.3"] {
     cursor: default;
 }
+
+/* 화살표 아이콘 공통 */
+.nav-arrow {
+    width: 20px;
+    height: 20px;
+    background: url('/public/img/icon_right_left_arrow.png') no-repeat center;
+    background-size: contain;
+    filter: invert(1); /* 내부를 흰색으로 변경 */
+}
+
+/* 이전 영상 버튼의 화살표 방향 변경 */
+.nav-button.prev .nav-arrow {
+    transform: rotate(180deg);
+}
+
