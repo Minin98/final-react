@@ -1,5 +1,5 @@
 import { React, useEffect, useState, useRef } from "react";
-import "../css/MypageInfo.css";
+import "../css/mypageinfo.css";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import defaultImg from "../img/defaultImg.png";
@@ -236,9 +236,8 @@ export default function MypageInfo() {
         <div className="profile-buttons">
           <button
             className="profile-button"
-            onClick={handleUpload}
-            disabled={!isUploadEnabled}>
-            {isUploadEnabled ? "프로필 사진 변경" : "이미지 클릭시 파일 선택"}
+            onClick={handleUpload}>
+            {isUploadEnabled ? "프로필 사진 변경" : "프로필 사진 추가"}
           </button>
           <button className="removeprofile-button" onClick={handleFileRemove}>
             프로필 삭제하기
