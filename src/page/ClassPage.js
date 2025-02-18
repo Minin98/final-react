@@ -5,6 +5,10 @@ import apiAxios from "../lib/apiAxios";
 import ClassUpdate from "./ClassUpdate";
 import Chapter from "./Chapter";
 import Notice from "./Notice";
+import QNA from "./QNA";
+import QNAWrite from "./QNAWrite";
+import Rate from "./Rate";
+import RateWrite from "./RateWrite";
 import "../css/ClassPage.css";
 import { jwtDecode } from "jwt-decode";
 
@@ -16,10 +20,13 @@ export default function ClassPage() {
     const [showUpdateModal, setShowUpdateModal] = useState(false);
     const [loading, setLoading] = useState(true);
     const [isEnrolled, setIsEnrolled] = useState(false);
+    const [askWriting, setAskWriting] = useState(false);
+    const [rateWriting, setRateWriting] = useState(false);
+    const [chapters, setChapters] = useState([]);
 
     const user = useSelector((state) => state.users.value);
     const decodeToken = user?.token ? jwtDecode(user.token) : null;
-    const grade = decodeToken?.grade || (decodeToken?.roles === "강사" ? 1 : decodeToken?.roles === "학생" ? 2 : 3);
+    const grade = decodeToken?.grade ?? 0;
     const isClassOwner = classInfo?.uno && decodeToken?.sub && grade === 1 && String(decodeToken.sub) === String(classInfo?.uno);
 
     // 강의 정보 불러오기
@@ -39,14 +46,16 @@ export default function ClassPage() {
 
     // 수강 여부 확인
     const checkEnrollmentStatus = useCallback(() => {
+        if (!user.token) return;
+
         apiAxios.get(`/usersProgress/check?classNumber=${classNumber}`, {
             headers: { "Authorization": `Bearer ${user.token}` }
         })
-        .then((res) => {
-            setIsEnrolled(res.data.isEnrolled);
-        })
-        .catch((err) => console.error("수강 여부 확인 실패", err));
-    }, [classNumber, user.token]);
+            .then((res) => {
+                setIsEnrolled(res.data.isEnrolled);
+            })
+            .catch((err) => console.error("수강 여부 확인 실패", err));
+    }, [classNumber]);
 
     useEffect(() => {
         if (!classNumber) {
@@ -60,6 +69,8 @@ export default function ClassPage() {
 
     const handleMenuChange = (menu) => {
         setActiveMenu(menu);
+        setAskWriting(false);
+        setRateWriting(false);
     };
 
     // "강의 수강하기" 버튼
@@ -70,11 +81,11 @@ export default function ClassPage() {
                 "Authorization": `Bearer ${user.token}`
             }
         })
-        .then(() => {
-            alert("강의 수강이 완료되었습니다!");
-            setIsEnrolled(true);
-        })
-        .catch((err) => console.error("수강 신청 실패", err));
+            .then(() => {
+                alert("강의 수강이 완료되었습니다!");
+                setIsEnrolled(true);
+            })
+            .catch((err) => console.error("수강 신청 실패", err));
     };
 
     // "수강 취소" 버튼
@@ -82,11 +93,11 @@ export default function ClassPage() {
         apiAxios.delete(`/usersProgress/cancel?classNumber=${classNumber}`, {
             headers: { "Authorization": `Bearer ${user.token}` }
         })
-        .then(() => {
-            alert("수강 취소가 완료되었습니다!");
-            setIsEnrolled(false);
-        })
-        .catch((err) => console.error("수강 취소 실패", err));
+            .then(() => {
+                alert("수강 취소가 완료되었습니다!");
+                setIsEnrolled(false);
+            })
+            .catch((err) => console.error("수강 취소 실패", err));
     };
 
     // 강의 삭제
@@ -97,13 +108,13 @@ export default function ClassPage() {
                 "Authorization": `Bearer ${user.token}`
             }
         })
-        .then(res => {
-            alert(res.data.msg);
-            if (res.data.code === 1) {
-                navigate('/classList');
-            }
-        })
-        .catch(err => console.log(err));
+            .then(res => {
+                alert(res.data.msg);
+                if (res.data.code === 1) {
+                    navigate('/classList');
+                }
+            })
+            .catch(err => console.log(err));
     };
 
     // 강의 수정 후 새로고침
@@ -115,7 +126,7 @@ export default function ClassPage() {
     return (
         <div className="class-container">
             {loading && <p className="loading-text">로딩 중...</p>}
-            
+
             {/* 강의 헤더 */}
             <div className="class-header">
                 <span className="class-category">{classInfo.category}</span>
@@ -157,8 +168,12 @@ export default function ClassPage() {
             <div className="class-content">
                 {activeMenu === "chapter" && <Chapter classNumber={classNumber} isEnrolled={isEnrolled} />}
                 {activeMenu === "notice" && <Notice classNumber={classNumber} />}
-                {activeMenu === "qna" && <Notice classNumber={classNumber} />}
-                {activeMenu === "rate" && <Notice classNumber={classNumber} />}
+                {activeMenu === "qna" && (
+                    askWriting ? <QNAWrite setAskWriting={setAskWriting} chapters={chapters} /> : <QNA setAskWriting={setAskWriting} />
+                )}
+                {activeMenu === "rate" && (
+                    rateWriting ? <RateWrite setRateWriting={setRateWriting} /> : <Rate setRateWriting={setRateWriting} />
+                )}
             </div>
 
             {showUpdateModal && <ClassUpdate classInfo={classInfo} onClose={() => setShowUpdateModal(false)} onClassUpdated={updateHandler} />}

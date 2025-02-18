@@ -20,6 +20,7 @@ export default function Chapter({ isEnrolled }) {
     const [isQuizWriteModalOpen, setQuizWriteModalOpen] = useState(false);
     const [isQuizUpdateModalOpen, setQuizUpdateModalOpen] = useState(false);
     const [selectedQuiz] = useState(null);
+    const [quizProgress, setQuizProgress] = useState({});
 
     const [isUpdatingChapter, setIsUpdatingChapter] = useState(null);
     const [updatedChapterName, setUpdatedChapterName] = useState("");
@@ -45,9 +46,8 @@ export default function Chapter({ isEnrolled }) {
             .finally(() => setLoading(false));
     }, [classNumber]);
 
-    useEffect(() => {
-        fetchClassInfo();
-    }, [fetchClassInfo]);
+
+
 
     // 초 단위의 시간을 hh:mm:ss 형식으로 변환
     const formatDuration = (seconds) => {
@@ -142,13 +142,14 @@ export default function Chapter({ isEnrolled }) {
         setVideoWriteModalOpen(true);
     };
 
-    // 퀴즈 모달 오픈
+    //퀴즈 모달 오픈
     const openQuizWriteModal = (chapterNumber) => {
         setSelectedChapter(chapterNumber);
         setQuizWriteModalOpen(true);
+        console.log("Selected Chapter:", chapterNumber);
     };
 
-    // 퀴즈 삭제
+    // 퀴즈 삭제 함수
     const deleteQuiz = (chapterNumber) => {
         apiAxios.delete(`/quiz/${chapterNumber}`)
             .then((res) => {
@@ -159,7 +160,31 @@ export default function Chapter({ isEnrolled }) {
                 console.error("퀴즈 삭제 실패", err);
             });
     };
+    // 퀴즈 수정 모달 오픈
+    const openQuizUpdateModal = (chapterNumber) => {
+        setSelectedChapter(chapterNumber);
+        setQuizUpdateModalOpen(true);
+    };
+    // 퀴즈 진행률 불러오기
+    const fetchQuizProgress = useCallback(() => {
+        apiAxios.get(`/class/quiz/progress/${classNumber}`, {
+            headers: {
+                "Authorization": `Bearer ${user.token}`
+            }
+        })
+            .then((res) => {
+                // 응답을 확인하고 배열로 설정
+                console.log("퀴즈 진행률:", res.data.quizProgress);
+                setQuizProgress(res.data.quizProgress || []);  // 배열로 설정
+            })
+            .catch((err) => console.error("퀴즈 진행률 불러오기 실패:", err));
+    }, [classNumber, user.token]);
 
+    useEffect(() => {
+        fetchClassInfo();
+        fetchQuizProgress(); // 퀴즈 진행률 조회 추가
+    }, [fetchClassInfo, fetchQuizProgress]);
+    
     return (
         <div className="chapter-list">
             {loading && <p className="loading-text">로딩 중...</p>}
@@ -191,7 +216,7 @@ export default function Chapter({ isEnrolled }) {
                                             <button className="delete-chapter" onClick={() => deleteChapter(chapter)} disabled={loading}>챕터 삭제</button>
                                             {chapter.quizCount > 0 ? (
                                                 <>
-                                                    <button className="quiz-manage" onClick={() => setQuizUpdateModalOpen(true)}>퀴즈 수정</button>
+                                                    <button className="quiz-manage" onClick={() => openQuizUpdateModal(chapter.chapterNumber)}>퀴즈 수정</button>
                                                     <button className="quiz-manage" onClick={() => deleteQuiz(chapter.chapterNumber)}>퀴즈 삭제</button>
                                                 </>
                                             ) : (
@@ -200,8 +225,16 @@ export default function Chapter({ isEnrolled }) {
                                         </div>
                                     )}
 
-                                    {grade === 2 && (
-                                        <button className="start-quiz" onClick={() => navigate(`/quiz/${chapter.chapterNumber}`)}>퀴즈 풀기</button>
+                                    {grade === 2 && isEnrolled && (
+                                        chapter.quizCount > 0 && (
+                                            <button
+                                                className="start-quiz"
+                                                onClick={() => navigate(`/quiz/${classNumber}/${chapter.chapterNumber}`)}
+                                                disabled={quizProgress.find(progress => progress.chapterNumber === chapter.chapterNumber)?.chapterProgress === 100}
+                                            >
+                                                {quizProgress.find(progress => progress.chapterNumber === chapter.chapterNumber)?.chapterProgress === 100 ? "풀이 완료" : "퀴즈 풀기"}
+                                            </button>
+                                        )
                                     )}
                                 </>
                             )}

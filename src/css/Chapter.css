@@ -234,3 +234,9 @@
     border: 2px solid #ccc;
     cursor: not-allowed;
 }
+.start-quiz:disabled {
+    background-color: #d3d3d3; /* 연한 회색 */
+    color: #808080; /* 글씨도 회색 */
+    cursor: not-allowed; /* 마우스 커서를 비활성화된 상태로 */
+    opacity: 0.6; /* 약간 흐리게 */
+  }

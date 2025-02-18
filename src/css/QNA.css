@@ -48,7 +48,7 @@
   color: #FF8D00;
   text-align: center;
   border-radius: 20px;
-  box-shadow: 3px 3px 5px rgba(187, 187, 187, 0.5);
+  box-shadow: 0px 3px 3px rgba(187, 187, 187, 0.5);
 }
 
 .qna-title {
@@ -112,19 +112,19 @@
 }
 
 .comments-section {
-  position: relative;
+  
 }
 
 .comment-card {
   background: #FFFFFF;
-  padding: 15px;
   border-top: 1px solid #ddd; 
 }
 
 .comment-header {
   display: flex;
   align-items: center;
-  margin: 10px 0px;
+  margin: 10px 30px;
+
 }
 
 .comment-user-icon {
@@ -146,7 +146,7 @@
 }
 
 .comment-date {
-  font-size: 14px;
+  font-size: 12px;
   color: #666;
   margin-left: auto;
 }
@@ -160,12 +160,6 @@
   margin-left: 30px;
 }
 
-.add-comment-container {
-  display: flex;
-  align-items: center;
-  border-top: 1px solid #ddd; 
-  justify-content: flex-end;
-}
 
 /* 답변 입력창 스타일 */
 .add-comment-container {
@@ -197,11 +191,17 @@
   height: 25px;
 }
 
+.add-comment-button-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+  border-top: 1px solid #ddd;
+  align-items: center;
+  padding: 10px 30px;
+}
+
 /* 답변 추가 버튼 스타일 */
 .add-comment-button {
-  position: absolute;
-  bottom: 5px;
-  right: 10px;
   width: 80px;
   height: 30px;
   background: #FFFFFF;
@@ -217,4 +217,113 @@
 .add-comment-button:hover {
   background: #FF8D00;
   color: white;
+}
+
+/* qna 수정, 삭제 */
+
+/* 질문 수정 입력 필드 */
+.edit-ask-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 30px;
+  padding-bottom: 0px;
+}
+
+.edit-ask-container label {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.edit-ask-container input,
+.edit-ask-container textarea {
+  width: 100%;
+  padding: 15px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  resize: none;
+  box-sizing: border-box;
+}
+
+.edit-ask-container textarea {
+  height: 150px;
+}
+
+.edit-ask-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.edit-ask-actions button {
+  padding: 8px 12px;
+  font-size: 14px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.edit-ask-actions button:first-child {
+  background-color: #fff;
+  color: #ff8c00;
+  border: 1px solid #ff8c00;
+}
+
+.edit-ask-actions button:first-child:hover {
+  background-color: #ff8c00;
+  color: #fff;
+}
+
+.edit-ask-actions button:last-child {
+  background-color: #ddd;
+}
+
+.edit-ask-actions button:last-child:hover {
+  background-color: #bbb;
+}
+
+/* 질문 수정, 삭제 버튼 */
+.qna-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  margin-left: 30px;
+}
+
+.qna-edit-btn,
+.qna-delete-btn {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.qna-edit-btn {
+  background-image: url("/public/img/edit.png");
+}
+
+.qna-delete-btn {
+  background-image: url("/public/img/trash.png");
+}
+
+.qna-edit-btn:hover,
+.qna-delete-btn:hover {
+  opacity: 0.7;
+}
+
+.comment-delete-btn {
+  background-image: url("/public/img/trash.png");
+  width: 20px;
+  height: 20px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  background-size: contain;
+  background-repeat: no-repeat;
+
+  margin-left: 10px;
 }

@@ -50,7 +50,7 @@ h2 {
 /* 왼쪽, 오른쪽 컨테이너 스타일 */
 .left_container,
 .right_container {
-    width: 50%;
+    width: 48%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -96,7 +96,7 @@ input {
     display: flex;
     flex-flow: row nowrap;
     justify-content: center;
-    gap: 150px;
+    gap: 170px;
 }
 
 .required-note {
@@ -134,7 +134,7 @@ input {
 }
 
 .register {
-    background-image: url("../img/background.png");
+    background-image: url("/public/img/background.png");
     background-size: cover;
     /* 배경 이미지 크기를 화면에 맞게 조정 */
     background-position: center;
