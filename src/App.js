@@ -30,6 +30,8 @@ import Rate from "./page/Rate";
 import RateWrite from "./page/RateWrite";
 import VideoPage from './page/VideoPage';
 import CheckUser from "./page/CheckUser";
+import TeacherProfile from "./page/TeacherProfile";
+import WebSocketTest from "./page/WebSocketTest";
 
 
 function Layout() {
@@ -40,7 +42,7 @@ function Layout() {
   return (
     <>
       {!hideHeaderFooter && <Header />}
-      <Routes>
+      <Routes>  
         <Route path="/" element={<Main />} />
         <Route path="/login" element={<Login />} />
         <Route path="/kakao/login/oauth" element={<KaKaoRedirect />} />
@@ -65,6 +67,8 @@ function Layout() {
         <Route path="/class/:classNumber/rate" element={<Rate />} />
         <Route path="/class/:classNumber/rate/write" element={<RateWrite />} />
         <Route path='/video/:videoNumber' element={<VideoPage />} />
+        <Route path="/teacherProfile/:uno" element={<TeacherProfile />} />
+        <Route path='/class/:classNumber/chat' element={<WebSocketTest />} />
       </Routes>
       {!hideHeaderFooter && <Footer />}
     </>

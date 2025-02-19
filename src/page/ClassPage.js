@@ -12,6 +12,7 @@ import RateWrite from "./RateWrite";
 import "../css/ClassPage.css";
 import { jwtDecode } from "jwt-decode";
 import StarRating from "../components/StarRating";
+import WebSocketTest from "./WebSocketTest";
 
 export default function ClassPage() {
     const { classNumber } = useParams();
@@ -134,7 +135,12 @@ export default function ClassPage() {
             <div className="class-header">
                 <span className="class-category">{classInfo.category}</span>
                 <h1 className="class-title">{classInfo.title}</h1>
-                <p className="class-instructor">{classInfo.name} 강사</p>
+                <div className="class-instructor-info">
+                    <p className="class-instructor">{classInfo.name} 강사</p>
+                    <Link to={`/teacherProfile/${classInfo.uno}`} className="class-instructor-link">
+                        강사소개 바로가기 &gt;
+                    </Link>
+                </div>
                 <p className="class-description">{classInfo.description}</p>
                 <div className="class-rate">
                     <StarRating rateCount={averageRate} setRateCount={() => { }} className="class-star-rating" />
@@ -166,6 +172,7 @@ export default function ClassPage() {
                 <button className={activeMenu === "notice" ? "active" : ""} onClick={() => handleMenuChange("notice")}>공지사항</button>
                 <button className={activeMenu === "qna" ? "active" : ""} onClick={() => handleMenuChange("qna")}>Q&A</button>
                 <button className={activeMenu === "rate" ? "active" : ""} onClick={() => handleMenuChange("rate")}>수강평</button>
+                <button className={activeMenu === "chat" ? "active" : ""} onClick={() => handleMenuChange("chat")}>채팅</button>
             </div>
 
             {/* 강의 컨텐츠 */}
@@ -178,6 +185,7 @@ export default function ClassPage() {
                 {activeMenu === "rate" && (
                     rateWriting ? <RateWrite setRateWriting={setRateWriting} /> : <Rate setRateWriting={setRateWriting} />
                 )}
+                {activeMenu === "chat" && <WebSocketTest classNumber={classNumber} />}
             </div>
 
             {showUpdateModal && <ClassUpdate classInfo={classInfo} onClose={() => setShowUpdateModal(false)} onClassUpdated={updateHandler} />}

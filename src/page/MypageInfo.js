@@ -168,6 +168,7 @@ export default function MypageInfo() {
       console.log(res.data);
       if (res.data) {
         alert("정보 변경 완료");
+        window.location.reload();
       }
 
       // 업데이트 완료 후 최신 데이터 불러오기
