@@ -55,18 +55,13 @@ export default function MypageInfo() {
 
     // 프로필 이미지 가져오기 (Base64 대신 URL 반환)
     axios
-      .post(
-        "http://localhost:9999/ProfileImage",
-        {},
+      .get(
+        "http://localhost:9999/GetUserProfile",
         { headers: { Authorization: `Bearer ${token}` } }
       )
       .then((res) => {
         console.log("서버 응답:", res.data);
-        if (res.data.profileImageUrl && res.data.profileImageUrl !== "non") {
-          setProfileImage(`http://localhost:9999${res.data.profileImageUrl}`);
-        } else {
-          setProfileImage(defaultImg);
-        }
+        setProfileImage(res.data.profileImg);
       })
       .catch((err) => console.error("요청 에러:", err));
   }, [dataRoad]);
@@ -107,9 +102,12 @@ export default function MypageInfo() {
 
       console.log("업로드 성공:", res.data);
 
-      if (res.data.profilePath) {
-        setProfileImage(`http://localhost:9999${res.data.profilePath}`);
-      }
+      if (res.data.profileImg && res.data.profileImg !== "non") {
+        setProfileImage(res.data.profileImg);
+    } else {
+        setProfileImage("/default-profile.png"); // 기본 이미지 설정
+    }
+    
 
       setIsUploadEnabled(false);
       alert("프로필 사진이 변경되었습니다.");
@@ -123,7 +121,7 @@ export default function MypageInfo() {
   const handleFileRemove = async () => {
     axios.post(
       "http://localhost:9999/UpdateUserProfile",
-      { file: null },
+      new FormData(),
       {
         headers: {
           "Content-Type": "multipart/form-data",
@@ -133,14 +131,12 @@ export default function MypageInfo() {
     );
 
     axios
-      .post(
-        "http://localhost:9999/ProfileImage",
-        {},
+      .get(
+        "http://localhost:9999/GetUserProfile",
         { headers: { Authorization: `Bearer ${token}` } }
       )
       .then((res) => {
         console.log("서버 응답:", res.data);
-        setProfileImage(res.data.profileImageBase64);
       })
       .catch((err) => console.error("요청 에러:", err));
 
@@ -210,6 +206,12 @@ export default function MypageInfo() {
     }));
   };
 
+  const tokenlenth = () => {
+    const decodedToken = jwtDecode(token);
+    console.log("decodedToken : ", decodedToken);
+    console.log(" token length : ",token.length);
+  }
+
   return (
     <div className="mypage-container">
       <div className="profile-section">
@@ -218,7 +220,6 @@ export default function MypageInfo() {
             src={profileImage || defaultImg}
             alt="프로필 이미지"
             className="profile-image"
-            style={{ cursor: "pointer" }}
           />
         </label>
 
@@ -236,7 +237,8 @@ export default function MypageInfo() {
         <div className="profile-buttons">
           <button
             className="profile-button"
-            onClick={handleUpload}>
+            onClick={handleUpload}
+            disabled={!isUploadEnabled}>
             {isUploadEnabled ? "프로필 사진 변경" : "프로필 사진 추가"}
           </button>
           <button className="removeprofile-button" onClick={handleFileRemove}>
@@ -267,7 +269,7 @@ export default function MypageInfo() {
                     value={userInfo[key]}
                   />
                   <div className="btn-block">
-                    <button className={`${key}-update`} onClick={(e) => toggleEditMode(e, key)} style={{ margin: "0px 10px 0px 0px" }}>취소</button>
+                    <button className={`${key}-update`} onClick={(e) => toggleEditMode(e, key)} >취소</button>
                     <button className={`${key}-update`} onClick={updatehandle}>저장</button>
                   </div>
                 </div>
@@ -280,7 +282,7 @@ export default function MypageInfo() {
           {type === 0 && (
             <Link className="password-change" to="/checkUser" state="/updatePassword">비밀번호 변경하기</Link>
           )}
-        </div> 
+        </div>
       </div>
     </div>
   );

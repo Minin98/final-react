@@ -11,6 +11,7 @@ import Rate from "./Rate";
 import RateWrite from "./RateWrite";
 import "../css/ClassPage.css";
 import { jwtDecode } from "jwt-decode";
+import StarRating from "../components/StarRating";
 
 export default function ClassPage() {
     const { classNumber } = useParams();
@@ -23,6 +24,7 @@ export default function ClassPage() {
     const [askWriting, setAskWriting] = useState(false);
     const [rateWriting, setRateWriting] = useState(false);
     const [chapters, setChapters] = useState([]);
+    const [averageRate, setAverageRate] = useState(0); // 평균 평점 상태값 추가
 
     const user = useSelector((state) => state.users.value);
     const decodeToken = user?.token ? jwtDecode(user.token) : null;
@@ -36,6 +38,7 @@ export default function ClassPage() {
             .then((res) => {
                 if (res.data.class) {
                     setClassInfo(res.data.class);
+                    setAverageRate(res.data.rate || 0); // 평균 평점 추가
                 } else {
                     console.error("강의 정보가 존재하지 않습니다.");
                 }
@@ -134,9 +137,10 @@ export default function ClassPage() {
                 <p className="class-instructor">{classInfo.name} 강사</p>
                 <p className="class-description">{classInfo.description}</p>
                 <div className="class-rate">
-                    <span>평점 : {classInfo.rate}</span>
-                    <Link to={`/class/${classNumber}/rate`} className="review">수강평 보기</Link>
+                    <StarRating rateCount={averageRate} setRateCount={() => { }} className="class-star-rating" />
+                    <span>평점 : {averageRate}</span>
                 </div>
+                <p>수강생 {classInfo.studentCount}명</p>
                 {isClassOwner && (
                     <div className="instructor-controls">
                         <button className="class-modify-button" onClick={() => setShowUpdateModal(true)}>강의 수정</button>
@@ -169,7 +173,7 @@ export default function ClassPage() {
                 {activeMenu === "chapter" && <Chapter classNumber={classNumber} isEnrolled={isEnrolled} />}
                 {activeMenu === "notice" && <Notice classNumber={classNumber} />}
                 {activeMenu === "qna" && (
-                    askWriting ? <QNAWrite setAskWriting={setAskWriting} chapters={chapters} /> : <QNA setAskWriting={setAskWriting} />
+                    askWriting ? <QNAWrite setAskWriting={setAskWriting} chapters={chapters} /> : <QNA setAskWriting={setAskWriting} isClassOwner={isClassOwner} />
                 )}
                 {activeMenu === "rate" && (
                     rateWriting ? <RateWrite setRateWriting={setRateWriting} /> : <Rate setRateWriting={setRateWriting} />
