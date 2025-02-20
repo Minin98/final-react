@@ -4,7 +4,8 @@ import axios from "axios";
 // 현재 실행 중인 환경의 hostname 확인 (localhost 또는 IP 자동 설정)
 const API_BASE_URL = window.location.hostname === "localhost"
   ? "http://localhost:9999" 
-  : `http://${window.location.hostname}:9999`;
+  : "http://ec2-43-201-154-174.ap-northeast-2.compute.amazonaws.com:9999";
+  // : `http://${window.location.hostname}:9999`;
 
 const apiAxios = axios.create({
   baseURL: API_BASE_URL,
