@@ -8,7 +8,8 @@ const API_BASE_URL = window.location.hostname === "localhost"
   // : `http://${window.location.hostname}:9999`;
 
 const apiAxios = axios.create({
-  baseURL: API_BASE_URL,
+  // baseURL: API_BASE_URL,
+  baseURL: "http://ec2-43-201-154-174.ap-northeast-2.compute.amazonaws.com:9999",
   headers: {
     "Content-Type": "application/json",
   },
